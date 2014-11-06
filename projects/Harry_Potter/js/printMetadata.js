@@ -11,7 +11,7 @@ function printMetadata(node_object){
 	
 	"<p align='center'; style='font-family:HarryPotter; font-size:150%'><a class='iframe' href='http://harrypotter.wikia.com/wiki/" + node_object.link + "'>" + node_object.label + "</a>"
 	
-	document.getElementById("slider").innerHTML += "<h1 style='font-family:HarryPotter' align='center'><b>Connections: </b></p>"
+	document.getElementById("slider").innerHTML += "<h1 style='font-family:HarryPotter'; font-size:100% align='center'>Connections: </p>"
 	
 	for (var i = 0; i < node_object.connection_label.length; i++) {
         

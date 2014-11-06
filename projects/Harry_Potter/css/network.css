@@ -25,7 +25,7 @@
 /* HP font */
 @font-face {
         font-family: HarryPotter;
-        src: url('../fonts/HP.ttf');
+        src: url('fonts/HP.ttf');
 }
 
 h1 { 
