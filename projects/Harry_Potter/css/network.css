@@ -115,16 +115,10 @@ font-size: 150%
   left: 35px;
   margin: 5px;
 }
-.checkbox {
-  position: absolute;
-  top: 50px;
-  left: 35px;
-  margin: 5px;
-}
 .nameSearch {
   position: absolute;
-  top: 15px;
-  left: 365px;
+  top: 55px;
+  left: 35px;
   margin: 5px;
 }
 /* Autocomplete style */
