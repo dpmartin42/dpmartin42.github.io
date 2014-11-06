@@ -25,12 +25,18 @@
 /* HP font */
 @font-face {
         font-family: HarryPotter;
-        src: url('fonts/HP.ttf');
+        src: url('HP.ttf');
 }
 
 h1 { 
-font-family: "HarryPotter", sans-serif;
+font-family: "HarryPotter";
 text-align: center;
+font-size: 200%
+}
+h2 { 
+font-family: "HarryPotter";
+text-align: center;
+font-size: 150%
 }
 
 .instructions{

@@ -9,9 +9,9 @@ function printMetadata(node_object){
 	
 	document.getElementById("slider").innerHTML +=
 	
-	"<p align='center'; style='font-family:HarryPotter; font-size:150%'><a class='iframe' href='http://harrypotter.wikia.com/wiki/" + node_object.link + "'>" + node_object.label + "</a>"
+	"<h1><a class='iframe' href='http://harrypotter.wikia.com/wiki/" + node_object.link + "'>" + node_object.label + "</a></h1>"
 	
-	document.getElementById("slider").innerHTML += "<h1 style='font-family:HarryPotter'; font-size:100% align='center'>Connections: </p>"
+	document.getElementById("slider").innerHTML += "<h2>Connections:</h2>"
 	
 	for (var i = 0; i < node_object.connection_label.length; i++) {
         
