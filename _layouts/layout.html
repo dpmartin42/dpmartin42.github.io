@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <title>
+    {% if page.title %}
+      {{ page.title }}
+    {% else %}
+      Blog
+    {% endif %}
+    | Daniel P. Martin
+  </title>
+
+  <meta name="author" content="{{ site.name }}" />
+  <meta name="description" content="{{ site.description }}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="shortcut icon" href="images/rotunda.ico">
+
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ site.github.url }}/css/base.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="{{ site.github.url }}/css/pygments.css" type="text/css" />
+  <link media="only screen and (max-device-width: 480px)" href="{{ site.github.url }}/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link media="only screen and (device-width: 768px)" href="{{ site.github.url }}/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ site.github.url }}/js/application.js"></script>
+</head>
+
+<body>
+  <section class="sidebar">
+    <a href="/">
+      <img src="{{ site.url }}/images/hobbes.png" height="75" width="75" class="avatar" />
+    </a>
+
+    <section class="name">
+      <a href="/">
+        <span id="fname">Dan</span>
+        <span id="lname">Martin</span>
+      </a>
+    </section>
+    
+
+
+    <section class="meta">
+      <script>
+      emailE = ('dpmartin42@' + 'gmail.com')
+	  document.write('<a href="mailto:' + emailE + '" target="_blank"><i class="fa fa-envelope-square"></i></a>')
+	  </script>
+      <a href="https://github.com/dpmartin42" target="_blank"><i class="fa fa-github"></i></a>
+      <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts" target="_blank"><i class="fa fa-stack-exchange"></i></a>
+
+    </section>
+
+    <section class="sections">
+      <ul>
+        <li><a href="/posts.html">Posts</a></li>
+        <li><a href="/visualizations.html">Visualizations</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/research.html">Research</a></li>
+        <li><a href="/academics.html">Academics</a></li>
+        <li><a href="/teaching.html">Teaching</a></li>
+        <li><a href="/links.html">Links</a></li>
+        <li><a href="/vita.html">Vita</a></li>
+
+      </ul>
+    </section>
+  </section>
+
+  {{ content }}
+  
+  {% include google_analytics.html %}
+  
+</body>
+
+</html>

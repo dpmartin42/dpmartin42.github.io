@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+      R, Shiny, and Naming Babies
+    
+    | Daniel P. Martin
+  </title>
+
+  <meta name="author" content="Dan Martin" />
+  <meta name="description" content="This is the academic website and blog of Daniel P. Martin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="shortcut icon" href="images/rotunda.ico">
+
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="/css/pygments.css" type="text/css" />
+  <link media="only screen and (max-device-width: 480px)" href="/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link media="only screen and (device-width: 768px)" href="/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/application.js"></script>
+</head>
+
+<body>
+  <section class="sidebar">
+    <a href="/">
+      <img src="http://dpmartin42.github.io/images/hobbes.png" height="75" width="75" class="avatar" />
+    </a>
+
+    <section class="name">
+      <a href="/">
+        <span id="fname">Dan</span>
+        <span id="lname">Martin</span>
+      </a>
+    </section>
+    
+
+
+    <section class="meta">
+      <script>
+      emailE = ('dpmartin42@' + 'gmail.com')
+	  document.write('<a href="mailto:' + emailE + '" target="_blank"><i class="fa fa-envelope-square"></i></a>')
+	  </script>
+      <a href="https://github.com/dpmartin42" target="_blank"><i class="fa fa-github"></i></a>
+      <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts" target="_blank"><i class="fa fa-stack-exchange"></i></a>
+
+    </section>
+
+    <section class="sections">
+      <ul>
+        <li><a href="/posts.html">Posts</a></li>
+        <li><a href="/visualizations.html">Visualizations</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/research.html">Research</a></li>
+        <li><a href="/academics.html">Academics</a></li>
+        <li><a href="/teaching.html">Teaching</a></li>
+        <li><a href="/links.html">Links</a></li>
+        <li><a href="/vita.html">Vita</a></li>
+
+      </ul>
+    </section>
+  </section>
+
+  <section class="content">
+
+<h1>Wicked Good Data</h1>
+
+<p style="border: 2px solid #333"></p>
+
+  <h2>
+    <a href="/posts/Naming-Babies">R, Shiny, and Naming Babies</a>
+  </h2>
+
+  <section class="byline">
+    August 24, 2014
+  </section>
+
+  <p>As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful <del>error</del> messages to inform the user when something is not going according to plan.</p>
+
+<p>In the case of visualizing baby naming trends, a major component of interactivity is the ability of the user to search specific names and genders. Because the babynames data is not entirely exhaustive (only names with greater than 5 instances in a given year are included), I had an empty graph pop up for my trend plot and an error message render for my table of frequency counts.</p>
+
+<p>Luckily, with the newer versions of shiny (later than 0.9.1.9008), custom messages to the user can be created with the validation function if a givent conditional is satisfied. In my example, I had a plotting function that returned the string &ldquo;empty&rdquo; if the name did not exist in the dataset and a plot if it did. Then, all I needed to do was add a validate function in the server.R file uses the need function with two arguments: the conditional, and the message to be displayed when the conditional is false (NOT true).</p>
+
+<p>You can see the snippet of code that performs this action below:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r">output<span class="o">$</span>plot <span class="o">&lt;-</span> renderPlot<span class="p">({</span>
+  
+  p <span class="o">&lt;-</span> plotNames<span class="p">(</span>input<span class="o">$</span>name<span class="p">,</span>
+                 input<span class="o">$</span>sex<span class="p">,</span>
+                 <span class="kp">format</span><span class="p">(</span>input<span class="o">$</span>yearRange<span class="p">[</span><span class="m">1</span><span class="p">],</span> <span class="s">&quot;%Y&quot;</span><span class="p">),</span>
+                 <span class="kp">format</span><span class="p">(</span>input<span class="o">$</span>yearRange<span class="p">[</span><span class="m">2</span><span class="p">],</span> <span class="s">&quot;%Y&quot;</span><span class="p">))</span>
+  
+  validate<span class="p">(</span>
+    need<span class="p">(</span>p <span class="o">!=</span> <span class="s">&quot;empty&quot;</span><span class="p">,</span>
+         <span class="s">&quot;I&#39;m sorry, no names that you entered appear in this dataset.</span>
+<span class="s">         This means that all of them appear less than five times per</span>
+<span class="s">         year for whatever sex you indicated.&quot;</span><span class="p">))</span>
+      
+      p
+      
+    <span class="p">})</span></code></pre></div>
+
+
+<p>When I get some more time, I&rsquo;m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
+
+<p>For more information regarding the validation function, refer to <a href="http://shiny.rstudio.com/articles/validation.html">this</a> great tutorial created by the RStudio team.</p>
+
+  
+  <hr>
+
+  <!-- Bio here -->
+  <section class="meta">
+    <h3>About</h3>
+    <section class="copy">
+
+      <p>
+        I am a quantitative psychology graduate student at the University of Virginia, interested in
+        data analysis, visualization, and meta-science, among other things. While the title of my blog is
+        an homage to where I grew up, there is no guarantee that it will be "wicked good."   
+      </p>
+      
+          <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'dpmartin42githubio'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+      <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53291521-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    </section>
+  </section>
+</section>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53291521-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  
+</body>
+
+</html>

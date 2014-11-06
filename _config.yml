@@ -1,0 +1,24 @@
+markdown: rdiscount
+permalink: /posts/:title
+rdiscount:
+  extensions: [smart]
+highlighter: pygments
+  
+# Settings for analytics helper
+# Set 'provider' to the analytics provider you want to use.
+# Set 'provider' to false to turn analytics off globally.
+#        
+analytics :
+  provider : google
+  google : 
+      tracking_id : 'UA-123-12'
+  getclicky :
+    site_id : UA-26032429-1
+
+gems:
+  - jekyll-sitemap
+
+name: Dan Martin
+url: http://dpmartin42.github.io
+description: This is the academic website and blog of Daniel P. Martin
+

@@ -1,0 +1,50 @@
+---
+layout: layout
+---
+
+<section class="content">
+
+<h1>Wicked Good Data</h1>
+ 
+<p style="border: 2px solid #333"></p>
+ 
+  {% assign post = site.posts.first %}
+  {% assign content = post.content %}
+
+  <h2>
+    <a href="{{ post.url }}">{{ post.title }}</a>
+  </h2>
+
+  <section class="byline">
+    {{ post.date | date: "%B %e, %Y" }}
+  </section>
+  
+	{{ post.content | split:'<!--more-->' | first }}
+  
+  <hr>
+
+  <!-- Bio here -->
+  <section class="meta">
+    <h3>About</h3>
+    <section class="copy">
+
+      <p>
+        I am a quantitative psychology graduate student at the University of Virginia, interested in
+        exploratory data analysis, visualization, and meta-science, among other things. While the title of my blog is
+        an homage to where I grew up, there is no guarantee that it will be "wicked good."   
+      </p>
+      
+      <a href="{{ post.url }}#disqus_thread">Comments</a>
+
+    </section>
+
+
+</section>
+
+
+
+
+
+
+
+
