@@ -77,26 +77,28 @@
   
 
   <h2>
-    <a href="/posts/wizard-network">The Wizarding Network of Harry Potter</a>
+    <a href="/posts/brady-vs-rodgers">Brady/Rodgers Showdown</a>
   </h2>
 
   <section class="byline">
-    November  5, 2014
+    November 28, 2014
   </section>
   
-	<p>I spent part of my summer as an intern at the <a href="http://centerforopenscience.org/">Center for Open Science</a>. I wanted to become more familiar with JavaScript (I never used it before the internship), so I carved out my own project to create a better network visualization of users on the <a href="https://osf.io/">Open Science Framework</a>. This way, researchers could see who is working with whom, and on what projects.</p>
+	<p>With the way both teams are playing right now, this could be the first look at a possible Super Bowl matchup. As of the Friday before the game, various websites have the Packers as three-point favorites at home. In thinking about the outcome of the game, I realized I did not know the Packers' offense that well. Of course Rodgers has been playing great, but who does he favor as targets? What part of the field does he like to throw to? It seems like I always see a bomb or two to Jordy Nelson on SportsCenter. To get a better idea, I tried to find some data to get a better look at who Brady and Rodgers are targeting and where. Luckily, I was able to find a play-by-play data set from the beginning of 2014 season to the present, which is freely available from <a href="http://nflsavant.com/about.php">NFLsavant.com</a>.</p>
 
-<p>While that code is still being integrated into the CoS infrastructure, I wanted to write a post applying/extending my code to other datasets. After some thought, I figured creating a network of Harry Potter character connections would be pretty neat. While I found <a href="https://github.com/efekarakus/potter-network/tree/master/data" target="_blank">this</a>, unfortunately I was looking for a dataset that contained more than 65 characters. Looks like a job for web scraping!</p>
+<p>First, I decided to take a look at how pass targets are spread across the field between both the Green Bay and New England offense. See the figure below, and note that this includes all passing plays. As such, some attempts might be made by either Jimmy Garoppolo (New England&rsquo;s backup), or Matt Flynn (Green Bay&rsquo;s backup). Obviously more pass attempts are made closer to the line of scrimmage. Rodgers appears to slightly favor the right side of the field, while Brady seems to have substantial preference for short throws to the left side of the field. This is probably due to the high number of attempts to Edelman running either an out route on the left side of the field, or a crossing route from right to left.</p>
 
-<p>First, I scraped a list of 178 characters taken from <a href="http://en.wikipedia.org/wiki/List_of_Harry_Potter_characters" target="_blank">wikipedia</a>. These characters also have their own pages on a <a href="http://harrypotter.wikia.com/wiki/Main_Page" target="_blank">Harry Potter wiki site</a>, and the majority of these names were identical to what needed to be added to the URL to access the page. A quick code check revealed only a few mistakes to be corrected, but luckily not much manual labor was required in this step.</p>
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-3.png" alt="center" /></p>
 
-<p>Next, I made the assumption that on a given character&rsquo;s page, any name that was hyperlinked in the main text share some &ldquo;logical connection&rdquo; relevant in the Harry Potter universe. Of course, this assumption may not be completely tenable, but the results this came up with seemed reasonable. Thus, each character page was scraped for an image to use on a custom slider I created, as well as a list of connections to the other characters on my list.</p>
+<p>I then examined how the number of targets varied by location and player. This step required a little bit of work given that only a description of each play was included in the data set and not the actual targeted player. The regular expression I used was certainly not perfect due to some inconsistencies in these descriptions. However, it seemed to capture the majority of the information correctly. Again, this included pass attempts by the offense as a whole, not just with the starting QBs. The first figure shows the data for Green Bay. By far, Jordy Nelson is the favorite target, catching quite a few short passes on both the right and left side of the field. The vast majority of deep passes going to Nelson are on the left side of the field. Randall Cobb is also a popular target, though he tends to be targeted on short passes to the left side of the field.</p>
 
-<p>And that was it! All data scraping and cleaning took place in R, with the network layout being calculated using <a href="http://igraph.org/r/" target="_blank">igraph</a>. The actual network was visualized using the <a href="http://sigmajs.org/" target="_blank">sigma.js</a> JavaScript library, while the navigation tools and custom slider was created in plain ol' HTML/JavaScript.</p>
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-5.png" alt="center" /></p>
 
-<p>Both Hadley Wickham&rsquo;s new R web scraping tool <a href="https://github.com/hadley/rvest" target="_blank">rvest</a> and the awesome <a href="http://selectorgadget.com/" target="_blank">SelectorGadget</a> actually made this web scraping task much easier than I thought it would be. Note that rvest is not yet available on CRAN, but you can get the development version off his GitHub using devtools. One of my next posts will outline how to use rvest in more detail.</p>
+<p>While the Packers' offense is dominated by Nelson and Cobb, the Patriots offense is much more evenly-distributed. In addition to Edelman and Lafell as popular WR options, Brady also looks to Gronkowski, the TE, and Vereen, the 3rd-down running back. Edelman is the overall favorite for short throws to the left and right side of the field, though not by much. Gronkowski is also a favorite target down the middle of the field, where he is looking to get open against zone defenses with a seam route.</p>
 
-<p>Check out the finished product on my <a href="https://dpmartin42.github.io/visualizations.html" target="_blank">data visualization page</a>, and check out my <a href="https://github.com/dpmartin42/Networks" target="_blank">GitHub</a> if you want to see the web scraping or JavaScript code. I also included two more networks with simple datasets in case anyone is interested in messing around with <a href="http://sigmajs.org/" target="_blank">sigma.js</a>.</p>
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-6.png" alt="center" /></p>
+
+<p>This analysis is nowhere near exhaustive, but it gave me a better idea of what to expect for the game on Sunday. With the level of detail found in this play-by-play data set, I am hoping to do something a little more interesting for playoff teams at the end of the season. As always, the code and data can be found on (GitHib)[https://github.com/dpmartin42/dpmartin42.github.io]</p>
 
   
   <hr>
@@ -112,7 +114,7 @@
         an homage to where I grew up, there is no guarantee that it will be "wicked good."   
       </p>
       
-      <a href="/posts/wizard-network#disqus_thread">Comments</a>
+      <a href="/posts/brady-vs-rodgers#disqus_thread">Comments</a>
 
     </section>
 
