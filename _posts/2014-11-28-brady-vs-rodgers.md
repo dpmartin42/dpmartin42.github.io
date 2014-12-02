@@ -24,4 +24,4 @@ While the Packers' offense is dominated by Nelson and Cobb, the Patriots offense
 
 ![center](/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-6.png) 
 
-This analysis is nowhere near exhaustive, but it gave me a better idea of what to expect for the game on Sunday. With the level of detail found in this play-by-play data set, I am hoping to do something a little more interesting for playoff teams at the end of the season. As always, the code and data can be found on (GitHib)[https://github.com/dpmartin42/dpmartin42.github.io]
+This analysis is nowhere near exhaustive, but it gave me a better idea of what to expect for the game on Sunday. With the level of detail found in this play-by-play data set, I am hoping to do something a little more interesting for playoff teams at the end of the season. As always, the code and data can be found on [GitHib](https://github.com/dpmartin42/dpmartin42.github.io)
