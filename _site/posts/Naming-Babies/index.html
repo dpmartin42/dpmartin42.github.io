@@ -24,6 +24,8 @@
 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script type="text/javascript" src="/js/application.js"></script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
 </head>
 
 <body>
@@ -81,11 +83,11 @@
     August 24, 2014
   </section>
 
-  <p>As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful <del>error</del> messages to inform the user when something is not going according to plan.</p>
+  <p>As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful ~~error~~ messages to inform the user when something is not going according to plan.</p>
 
 <p>In the case of visualizing baby naming trends, a major component of interactivity is the ability of the user to search specific names and genders. Because the babynames data is not entirely exhaustive (only names with greater than 5 instances in a given year are included), I had an empty graph pop up for my trend plot and an error message render for my table of frequency counts.</p>
 
-<p>Luckily, with the newer versions of shiny (later than 0.9.1.9008), custom messages to the user can be created with the validation function if a givent conditional is satisfied. In my example, I had a plotting function that returned the string &ldquo;empty&rdquo; if the name did not exist in the dataset and a plot if it did. Then, all I needed to do was add a validate function in the server.R file uses the need function with two arguments: the conditional, and the message to be displayed when the conditional is false (NOT true).</p>
+<p>Luckily, with the newer versions of shiny (later than 0.9.1.9008), custom messages to the user can be created with the validation function if a givent conditional is satisfied. In my example, I had a plotting function that returned the string “empty” if the name did not exist in the dataset and a plot if it did. Then, all I needed to do was add a validate function in the server.R file uses the need function with two arguments: the conditional, and the message to be displayed when the conditional is false (NOT true).</p>
 
 <p>You can see the snippet of code that performs this action below:</p>
 
@@ -106,10 +108,10 @@
       
     <span class="p">})</span></code></pre></div>
 
+<p>When I get some more time, I’m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
 
-<p>When I get some more time, I&rsquo;m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
+<p>For more information regarding the validation function, refer to <a href="http://shiny.rstudio.com/articles/validation.html">this</a> great tutorial created by the RStudio team. </p>
 
-<p>For more information regarding the validation function, refer to <a href="http://shiny.rstudio.com/articles/validation.html">this</a> great tutorial created by the RStudio team.</p>
 
   
   <hr>
