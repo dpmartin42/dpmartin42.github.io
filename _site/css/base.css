@@ -113,7 +113,7 @@ a {
       font-size: 12px;
       background-color: #eeeeee;
       border: 1px solid #777777;
-      border-radius: 3px;
+      border-radius: 2px;
       padding: 2px 3px; }
   .content img {
     padding: 3px;
@@ -213,4 +213,11 @@ a {
 [alt=center] {
   display: block;
   margin: auto;
+
+}
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin-left: 10px;
 }
