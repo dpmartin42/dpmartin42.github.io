@@ -79,105 +79,40 @@
   
 
   <h2>
-    <a href="/posts/partial-dependence-1">Partial Dependence Plots - Part 1</a>
+    <a href="/posts/on-to-Seattle">We're on to Seattle</a>
   </h2>
 
   <section class="byline">
-    December 23, 2014
+    January 25, 2015
   </section>
   
-	<p>It can be difficult to understand the functional relations between predictors and an outcome when using black box prediction methods like random forests. One way to investigate these relations is with partial dependence plots. These plots are graphical visualizations of the marginal effect of a given variable (or multiple variables) on an outcome. Typically, these are restricted to only one or two variables due to the limits of human perception, and thus may be misleading due to hidden higher-order interactions. Despite this, partial dependence plots can still be extremely useful for knowledge discovery in large data sets, especially when the random forest is dominated by lower-order interactions and main effects. </p>
+	<p>Unfortunately the <a href="http://dpmartin42.github.io/posts/brady-vs-rodgers/">Pats/Packers Super Bowl Prediction</a> I made in Week 13 came up just short. To get my mind off of the Patriots’ football inflation tendencies and back on to the upcoming Super Bowl next week, I decided to update my previous football post where I looked at play-by-play data to visualize on-the-field pass distribution between the Pats and the Packers. I do the same here, but I also include rushing plays because the Seahawks are more of a run-heavy offense.</p>
 
-<p>Following the notation of Hastie et al. (2009) in <em>The Elements of Statistical Learning</em>, partial dependence plots can be mathematically defined as follows. Suppose <script type="math/tex">S</script> is a subset of <script type="math/tex">p</script> predictor variables, such that <script type="math/tex">S \subset \left\{X_1, X_2, \ldots, X_p\right\}</script>. Let <script type="math/tex">C</script> be a complement to <script type="math/tex">S</script>, such that <script type="math/tex">S \cup C = \left\{X_1, X_2, \ldots, X_p\right\}</script>. The random forest predictor function, <script type="math/tex">f(X)</script>, will depend upon all <script type="math/tex">p</script> predictor variables. Thus, <script type="math/tex">f(X) = f(X_S, X_C)</script>. The partial dependence of the <script type="math/tex">S</script> predictors on the predictive function <script type="math/tex">f(X)</script> is</p>
+<p>Starting with the aerial attack, I looked at where pass targets typically occurred on the field between Brady and Wilson. Brady has a strong preference for short throws to the left side of the field, which typically come in the form of an out route to Edelman, LaFell, or Vereen. Wilson, on the other hand, has a slight preference for the right side of the field. In total, the Pats obviously have a larger number of pass attempts this season.</p>
 
-<script type="math/tex; mode=display">
-f_S(X_S) = \mathbb{E}_{X_C}[f(X_S, X_C)]
-</script>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-3.png" alt="center" /> </p>
 
-<p>and can be estimated by</p>
+<p>Next, I examined how number of targets varied by both location and player (with at least 5 targets). Since only the description of each play was included in the data set, I used regular expressions to identify the targeted player. The first figure shows the data for New England. Again, we see a huge preference for short passes to the left by Brady. However, targets in this location seem to be fairly uniform across the most highly targeted players (Edelman, Gronk, Vereen, and LaFell). Gronk is favored up the middle, while Edelman is slightly favored to the right. </p>
 
-<script type="math/tex; mode=display">
-\bar{f}_S(X_S) = \frac{1}{N}\sum_{i = 1}^{N}[f(X_S, X_{Ci})]
-</script>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-5.png" alt="center" /> </p>
 
-<p>where <script type="math/tex">\left\{x_{C1}, x_{C2}, \ldots, x_{CN}\right\}</script> are the values of <script type="math/tex">X_C</script> ocurring over all observations in the training data. In other words, in order to calculate the partial dependence of a given variable (or variables), the entire training set must be utilized for every set of joint values in <script type="math/tex">X_S</script>. As one can image, this can be quite computationally expensive when the data set becomes large.</p>
+<p>Like Brady, Wilson also does not take many shots down the field, where he typically looks to Kearse down the right. While Baldwin receives the vast majority of the targets, the Seahawks have many others who are involved in the offense. For example, Lynch will be targeted on the left side of the field for short passes, while any one of four Seahawks (Kearse, Willson, Lynch, and Richardson; Harvin is no longer with the team) can be seen getting involved with short passes to the right. Like previously mentioned, Wilson favors short passes to the right side of the field.</p>
 
-<p>I have not had much luck finding a nice implementation of partial dependence plots for two predictors in R. The plotting function included in the randomForest package, for example, is limited to one variable. This is most likely due to the computation time required for plots including two variables. Because the data set needs to be repeated over the entire grid of hypothetical values, two variable plots can easily get out of hand with only a few thousand observations. </p>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-6.png" alt="center" /> </p>
 
-<p>One nice example is the <a href="http://cran.r-project.org/web/packages/plotmo/index.html">plotmo</a> package, which is a so-called “poor man’s” partial dependence plot. Essentially instead of averaging over the entire data set, it will just take the median value of all continuous predictors and the first level for all factors (as the default). While it does not create a true partial dependence plot, it blows traditional partial dependence plots out of the water in terms of speed. </p>
+<p>I then took a look at both team’s run offenses to finish up the post. I first plotted the number of rushes by the direction of the rush. The Patriots seem to start every week with a different running back. Ever since Ridley was lost for the season, the team has mainly been going with Blount as the power rusher and Vereen as the change-of-pace back, with a little bit of Gray sprinkled here and there. Either that, or they just ignore the run game all together. The Seahawks, on the other hand, favor the man known as “beast mode.” The Seahawks also have quite a few QB scrambles, with almost 50 on the year (these are denoted by the tick mark without a label all the way to the right of the plot). Overall, both teams follow similar patterns in terms of location; the Seahawks just have a lot more rushes. Additionally, the Seahawks put a little less focus on running to the guards (who are probably just pulling to become an extra blocker on these plays). </p>
 
-<p>Still, I wrote up a simple script, seen below, to get two-dimensional partial dependence plots. In this example, I’m using the College data set found in the ISLR package, which examines the relation between graduation rates and various statistics for US Colleges (N = 777) from the 1995 issue of US News and World Report. It contains 17 variables that can be used as predictors for graduation rate, such as whether a university is private or public, the acceptance rate, and the out-of-state tuition cost. For this example, I’m using the two variables that had the highest variable importance values: out-of-state tuition and percentage of alumni donating. Note that I am just treating the entire data set as the training set for simplicity. </p>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-8.png" alt="center" /> </p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>ISLR<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>randomForest<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<p>Finally, I faceted the plot above by player (minimum 10 touches). You can immediately identify the lack of a number one back for the Pats just by glancing at the number of touches given to each player. This is also a product of losing Ridley in the middle of the season, given the number of touches he had in the first few weeks. Blount has been picking up the slack, though, since he was also acquired right after Ridley got injured (and a week after Gray’s monster performance versus the Colts in the regular season). As a fan, seeing Vereen get so many touches up the middle can be annoying, especially because he is a third down back. I know many other Pats fans have not been happy with the play calling this season with that respect. Hopefully this trend does not continue for the Super Bowl.</p>
 
-<span class="c1"># set seed for reproducibility</span>
-<span class="kp">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-10.png" alt="center" /> </p>
 
-data<span class="p">(</span>College<span class="p">)</span>
+<p>While the Pats had quite a few players contributing in the rushing game, it’s not too hard to see what the Seahawks like to do. Lynch up the middle: all day, every day. This is the key to stopping the Seahawks offensive game plan. Notice, however, the number of designed runs and scrambles by Wilson as well. It will be tough to stop both Lynch and contain Wilson, and I expect the pass rush to suffer as a result. I expect the Pats defense will dare Wilson to throw, and rely on their upgraded secondary with Revis, Browner, McCourty, and Chung to win the game.</p>
 
-rf <span class="o">&lt;-</span> randomForest<span class="p">(</span>Grad.Rate <span class="o">~</span> <span class="m">.</span><span class="p">,</span> data <span class="o">=</span> College<span class="p">)</span>
-<span class="c1"># varImpPlot(rf)</span>
+<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-11.png" alt="center" /> </p>
 
-var1_vals <span class="o">&lt;-</span> <span class="kp">seq</span><span class="p">(</span>from <span class="o">=</span> <span class="kp">min</span><span class="p">(</span>College<span class="o">$</span>Outstate<span class="p">),</span>
-                 to <span class="o">=</span> <span class="kp">max</span><span class="p">(</span>College<span class="o">$</span>Outstate<span class="p">),</span>
-                 by <span class="o">=</span> <span class="p">(</span><span class="kp">max</span><span class="p">(</span>College<span class="o">$</span>Outstate<span class="p">)</span> <span class="o">-</span> <span class="kp">min</span><span class="p">(</span>College<span class="o">$</span>Outstate<span class="p">))</span><span class="o">/</span><span class="m">19</span><span class="p">)</span>
-
-var2_vals <span class="o">&lt;-</span> <span class="kp">seq</span><span class="p">(</span>from <span class="o">=</span> <span class="kp">min</span><span class="p">(</span>College<span class="o">$</span>perc.alumni<span class="p">),</span>
-                 to <span class="o">=</span> <span class="kp">max</span><span class="p">(</span>College<span class="o">$</span>perc.alumni<span class="p">),</span>
-                 by <span class="o">=</span> <span class="p">(</span><span class="kp">max</span><span class="p">(</span>College<span class="o">$</span>perc.alumni<span class="p">)</span> <span class="o">-</span> <span class="kp">min</span><span class="p">(</span>College<span class="o">$</span>perc.alumni<span class="p">))</span><span class="o">/</span><span class="m">19</span><span class="p">)</span>
-
-<span class="c1"># Create a 20x20 grid</span>
-two_vals <span class="o">&lt;-</span> <span class="kp">expand.grid</span><span class="p">(</span>var1_vals<span class="p">,</span> var2_vals<span class="p">)</span>
-two_vals <span class="o">&lt;-</span> arrange<span class="p">(</span>two_vals<span class="p">,</span> Var1<span class="p">,</span> Var2<span class="p">)</span>
-
-two_rep <span class="o">&lt;-</span> College<span class="p">[</span><span class="kp">rep</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">nrow</span><span class="p">(</span>College<span class="p">),</span> <span class="kp">nrow</span><span class="p">(</span>two_vals<span class="p">)),</span> <span class="p">]</span>
-
-two_rep<span class="o">$</span>Outstate <span class="o">&lt;-</span> <span class="kp">rep</span><span class="p">(</span>two_vals<span class="o">$</span>Var1<span class="p">,</span> each <span class="o">=</span> <span class="kp">nrow</span><span class="p">(</span>College<span class="p">))</span>
-two_rep<span class="o">$</span>perc.alumni <span class="o">&lt;-</span> <span class="kp">rep</span><span class="p">(</span>two_vals<span class="o">$</span>Var2<span class="p">,</span> each <span class="o">=</span> <span class="kp">nrow</span><span class="p">(</span>College<span class="p">))</span>
-
-two_pred <span class="o">&lt;-</span> predict<span class="p">(</span>rf<span class="p">,</span> two_rep<span class="p">)</span>
-two_rep<span class="o">$</span>pred <span class="o">&lt;-</span> two_pred
-
-two_agg <span class="o">&lt;-</span> group_by<span class="p">(</span>two_rep<span class="p">,</span> Outstate<span class="p">,</span> perc.alumni<span class="p">)</span> <span class="o">%&gt;%</span>
-  summarise<span class="p">(</span>mean_pred <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>pred<span class="p">))</span>
-
-z <span class="o">&lt;-</span> <span class="kt">matrix</span><span class="p">(</span>two_agg<span class="o">$</span>mean_pred<span class="p">,</span> nrow <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>var1_vals<span class="p">),</span> byrow <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
-
-<span class="c1"># Set color range (using grayscale)</span>
-jet.colors <span class="o">&lt;-</span> colorRampPalette<span class="p">(</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;#ffffff&quot;</span><span class="p">,</span> <span class="s">&quot;#2a2a2a&quot;</span><span class="p">)</span> <span class="p">)</span> 
-
-<span class="c1"># Generate the desired number of colors from this palette</span>
-nbcol <span class="o">&lt;-</span> <span class="m">100</span>
-color <span class="o">&lt;-</span> jet.colors<span class="p">(</span>nbcol<span class="p">)</span>
-
-<span class="c1"># Compute the z-value at the facet centers</span>
-zfacet <span class="o">&lt;-</span> z<span class="p">[</span><span class="m">-1</span><span class="p">,</span> <span class="m">-1</span><span class="p">]</span> <span class="o">+</span> 
-  z<span class="p">[</span><span class="m">-1</span><span class="p">,</span> <span class="m">-1</span> <span class="o">*</span> <span class="kp">length</span><span class="p">(</span>var1_vals<span class="p">)]</span> <span class="o">+</span> 
-  z<span class="p">[</span><span class="m">-1</span> <span class="o">*</span> <span class="kp">length</span><span class="p">(</span>var2_vals<span class="p">),</span> <span class="m">-1</span><span class="p">]</span> <span class="o">+</span> 
-  z<span class="p">[</span><span class="m">-1</span> <span class="o">*</span> <span class="kp">length</span><span class="p">(</span>var1_vals<span class="p">),</span> <span class="m">-1</span> <span class="o">*</span> <span class="kp">length</span><span class="p">(</span>var2_vals<span class="p">)]</span>
-
-<span class="c1"># Recode facet z-values into color indices</span>
-facetcol <span class="o">&lt;-</span> <span class="kp">cut</span><span class="p">(</span>zfacet<span class="p">,</span> nbcol<span class="p">)</span>
-
-<span class="c1"># Use persp for 3D plotting</span>
-persp<span class="p">(</span>x <span class="o">=</span> var1_vals<span class="p">,</span> y <span class="o">=</span> var2_vals<span class="p">,</span> z <span class="o">=</span> z<span class="p">,</span> theta <span class="o">=</span> <span class="m">-45</span><span class="p">,</span>
-      xlab <span class="o">=</span> <span class="s">&quot;\nOut of State Tuition&quot;</span><span class="p">,</span>
-      ylab <span class="o">=</span> <span class="s">&quot;\nPercentage Alumni Donating&quot;</span><span class="p">,</span>
-      zlab <span class="o">=</span> <span class="s">&quot;\nPredicted Value&quot;</span><span class="p">,</span>
-      cex.lab <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
-      ticktype <span class="o">=</span> <span class="s">&quot;detailed&quot;</span><span class="p">,</span>
-      col <span class="o">=</span> color<span class="p">[</span>facetcol<span class="p">])</span></code></pre></div>
-
-<p><img src="/figs/2014-12-23-partial-dependence-1/unnamed-chunk-1.png" alt="center" /> </p>
-
-<p>Again, this figure shows the partial dependence plot between both out-of-state tuition and percent of alumni donating to the institution, resulting in a three-dimensional plot. Both variables have positive relationships with the outcome, such that increased values in each variable correspond to an increase in the predicted graduation rate of a particular institution. Note that because both variables have consistent relations with predicted graduation rate across the values of the other variable, there is no substantial evidence for an interaction.</p>
-
-<p>Like I said before, the following code can be slow. The bottleneck for this implementation (which mirrors the partial dependence plot in the randomForest package) is with the predict function across the replicate data sets, which takes about 30 seconds on my machine. A more efficient method to perform these plots does exist, and is known as a weighted tree traversal. More information regarding this implementation can be found at the bottom of <a href="http://scikit-learn.org/stable/modules/ensemble.html">this page</a>, which outlines the procedure in scikit-learn for gradient boosted models. </p>
-
-<p>I have been messing around with a corresponding implementation for this in R, and hopefully my next post will be a follow up to these ideas. Stay tuned for Part 2!</p>
-
+<p>As always, the code and data can be found on <a href="https://github.com/dpmartin42/dpmartin42.github.io">GitHub</a>. GO PATS!</p>
 
   
   <hr>
@@ -193,7 +128,7 @@ persp<span class="p">(</span>x <span class="o">=</span> var1_vals<span class="p"
         an homage to where I grew up, there is no guarantee that it will be "wicked good."   
       </p>
       
-      <a href="/posts/partial-dependence-1#disqus_thread">Comments</a>
+      <a href="/posts/on-to-Seattle#disqus_thread">Comments</a>
 
     </section>
 
