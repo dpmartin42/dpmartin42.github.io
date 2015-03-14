@@ -79,40 +79,24 @@
   
 
   <h2>
-    <a href="/posts/on-to-Seattle">We're on to Seattle</a>
+    <a href="/posts/visualizing-PI-data">Visualizing Implicit Racial Bias</a>
   </h2>
 
   <section class="byline">
-    January 25, 2015
+    March 14, 2015
   </section>
   
-	<p>Unfortunately the <a href="http://dpmartin42.github.io/posts/brady-vs-rodgers/">Pats/Packers Super Bowl Prediction</a> I made in Week 13 came up just short. To get my mind off of the Patriots’ football inflation tendencies and back on to the upcoming Super Bowl next week, I decided to update my previous football post where I looked at play-by-play data to visualize on-the-field pass distribution between the Pats and the Packers. I do the same here, but I also include rushing plays because the Seahawks are more of a run-heavy offense.</p>
+	<p>For this project, I was looking to get more experience with D3.js and choropleths (I just find them to be fun visualization tools). Luckily, Project Implicit recently uploaded data from a few million participants they have been collecting over the past 10 years on a variety of different Implicit Association Tests (IATs), some of which have state and county information of those taking the test.</p>
 
-<p>Starting with the aerial attack, I looked at where pass targets typically occurred on the field between Brady and Wilson. Brady has a strong preference for short throws to the left side of the field, which typically come in the form of an out route to Edelman, LaFell, or Vereen. Wilson, on the other hand, has a slight preference for the right side of the field. In total, the Pats obviously have a larger number of pass attempts this season.</p>
+<p>For those of you who don’t know, the IAT <a href="https://implicit.harvard.edu/implicit/iatdetails.html">(as defined on the project implicit website)</a> is a measure of “the strength of associations between concepts (e.g., black people, gay people) and evaluations (e.g., good, bad) or stereotypes (e.g., athletic, clumsy).” In the case of the racial bias IAT, for example, participants are asked to sort words and pictures into stereotype congruent pairings (i.e., white and good; black and bad) or stereotype incongruent pairings (white and bad; black and good). The main idea is that sorting is much easier for the congruent pairing condition when compared to the incongruent pairing condition. Thus, taking the difference in reaction times for these two conditions for a given participant can create a measure of implicit bias. Note that this explanation is a simplification of the actual pre-processing algorithm used, known as the D-score.</p>
 
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-3.png" alt="center" /> </p>
+<p>Anyway, <a href="https://implicit.harvard.edu/implicit/takeatest.html">Project Implicit</a> is a website where individuals can take many different IATs to measure various implicit thoughts and biases. I highly recommend checking it out to see what taking an IAT is like and contributing to the project. For this visualization, I will be using the racial bias IAT, which by far has the most participants in the available data sets (and are available for download on their Open Science Framework <a href="https://osf.io/52qxl/">project page</a>.</p>
 
-<p>Next, I examined how number of targets varied by both location and player (with at least 5 targets). Since only the description of each play was included in the data set, I used regular expressions to identify the targeted player. The first figure shows the data for New England. Again, we see a huge preference for short passes to the left by Brady. However, targets in this location seem to be fairly uniform across the most highly targeted players (Edelman, Gronk, Vereen, and LaFell). Gronk is favored up the middle, while Edelman is slightly favored to the right. </p>
+<p>After creating an R script to download the files off the web and clean them, I went ahead and created the visualization. Note that I required a sample size of at least 100 for each state for the state-level visualization, and at least 30 for each county for the county-level visualization. I also restricted the sample to those who reported living in a U.S. state (i.e., no armed forces or U.S. territories), reported their race as white, and also reported their state and county information. This left a sample size of 1,206,827. Not too shabby!</p>
 
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-5.png" alt="center" /> </p>
+<p>You can see the visualization for state-level IAT scores from 2004 - 2013 <a href="/projects/IAT_Map/state_map.html">here</a>. You can also find the county-level plot as well, but it has a much more limiting sample size. Additionally, see below for a gif of how the choropleth changes across years. Not much of a conclusion can be made given the smaller sample size and the fact that samples are changing within each year, but it was fun putting together nonetheless. As always, the code and data for these visualizations can be found on <a href="https://github.com/dpmartin42/dpmartin42.github.io">GitHub</a>. </p>
 
-<p>Like Brady, Wilson also does not take many shots down the field, where he typically looks to Kearse down the right. While Baldwin receives the vast majority of the targets, the Seahawks have many others who are involved in the offense. For example, Lynch will be targeted on the left side of the field for short passes, while any one of four Seahawks (Kearse, Willson, Lynch, and Richardson; Harvin is no longer with the team) can be seen getting involved with short passes to the right. Like previously mentioned, Wilson favors short passes to the right side of the field.</p>
-
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-6.png" alt="center" /> </p>
-
-<p>I then took a look at both team’s run offenses to finish up the post. I first plotted the number of rushes by the direction of the rush. The Patriots seem to start every week with a different running back. Ever since Ridley was lost for the season, the team has mainly been going with Blount as the power rusher and Vereen as the change-of-pace back, with a little bit of Gray sprinkled here and there. Either that, or they just ignore the run game all together. The Seahawks, on the other hand, favor the man known as “beast mode.” The Seahawks also have quite a few QB scrambles, with almost 50 on the year (these are denoted by the tick mark without a label all the way to the right of the plot). Overall, both teams follow similar patterns in terms of location; the Seahawks just have a lot more rushes. Additionally, the Seahawks put a little less focus on running to the guards (who are probably just pulling to become an extra blocker on these plays). </p>
-
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-8.png" alt="center" /> </p>
-
-<p>Finally, I faceted the plot above by player (minimum 10 touches). You can immediately identify the lack of a number one back for the Pats just by glancing at the number of touches given to each player. This is also a product of losing Ridley in the middle of the season, given the number of touches he had in the first few weeks. Blount has been picking up the slack, though, since he was also acquired right after Ridley got injured (and a week after Gray’s monster performance versus the Colts in the regular season). As a fan, seeing Vereen get so many touches up the middle can be annoying, especially because he is a third down back. I know many other Pats fans have not been happy with the play calling this season with that respect. Hopefully this trend does not continue for the Super Bowl.</p>
-
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-10.png" alt="center" /> </p>
-
-<p>While the Pats had quite a few players contributing in the rushing game, it’s not too hard to see what the Seahawks like to do. Lynch up the middle: all day, every day. This is the key to stopping the Seahawks offensive game plan. Notice, however, the number of designed runs and scrambles by Wilson as well. It will be tough to stop both Lynch and contain Wilson, and I expect the pass rush to suffer as a result. I expect the Pats defense will dare Wilson to throw, and rely on their upgraded secondary with Revis, Browner, McCourty, and Chung to win the game.</p>
-
-<p><img src="/figs/2015-01-25-on-to-Seattle/unnamed-chunk-11.png" alt="center" /> </p>
-
-<p>As always, the code and data can be found on <a href="https://github.com/dpmartin42/dpmartin42.github.io">GitHub</a>. GO PATS!</p>
+<p><img src="/projects/IAT_Map/figure/IAT_state.gif" alt="Awesome cat gif" /></p>
 
   
   <hr>
@@ -128,7 +112,7 @@
         an homage to where I grew up, there is no guarantee that it will be "wicked good."   
       </p>
       
-      <a href="/posts/on-to-Seattle#disqus_thread">Comments</a>
+      <a href="/posts/visualizing-PI-data#disqus_thread">Comments</a>
 
     </section>
 

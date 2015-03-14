@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://dpmartin42.github.io/posts/visualizing-PI-data</loc>
+    <lastmod>2015-03-14T00:00:00-04:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://dpmartin42.github.io/posts/on-to-Seattle</loc>
     <lastmod>2015-01-25T00:00:00-05:00</lastmod>
     <priority>0.8</priority>
@@ -65,70 +71,70 @@
   
   <url>
     <loc>http://dpmartin42.github.io/404.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/about.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/academics.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/links.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/posts.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/research.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/teaching.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/visualizations.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://dpmartin42.github.io/vita.html</loc>
-    <lastmod>2015-01-25T23:19:22-05:00</lastmod>
+    <lastmod>2015-03-14T19:02:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -137,6 +143,18 @@
   <url>
     <loc>http://dpmartin42.github.io/projects/Harry_Potter/Harry_Potter_Network.html</loc>
     <lastmod>2014-11-05T16:46:00Z</lastmod>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://dpmartin42.github.io/projects/IAT_Map/county_map.html</loc>
+    <lastmod>2015-03-13T16:06:50Z</lastmod>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://dpmartin42.github.io/projects/IAT_Map/state_map.html</loc>
+    <lastmod>2015-03-13T16:05:03Z</lastmod>
     <priority>0.6</priority>
   </url>
   

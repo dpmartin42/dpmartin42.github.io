@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <title>Implicit Racial Bias</title>
+ <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+ <script type="text/javascript" src="http://d3js.org/queue.v1.min.js"></script>
+ <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
+ 
+</head>
+<style>
+ 
+path {
+ stroke:white;
+ stroke-width: 1px;
+}
+
+h1 {
+text-indent: 300px;
+}
+ 
+h2 {
+text-indent: 450px;
+}
+ 
+body {
+ font-family: Arial, sans-serif;
+}
+ 
+.legend {
+ font-size: 14px;
+ top: -200px;
+}
+ 
+div.tooltip {
+ position: absolute;
+ text-align: center;
+ width: 250px;
+ height: 25px;
+ padding: 2px;
+ font-size: 14px;
+ border: 2px solid;
+ background: #dddddd;
+ border-radius: 4px;
+ pointer-events: none;
+}
+</style>
+<body>
+<h1>Implicit Racial Bias - State Level</h1>
+<h2>2004 - 2013</h2>
+ <script type="text/javascript">
+ var width = 960,
+ height = 500;
+ var color_domain = [0.34, 0.37, 0.40, 0.43, 0.46, 2]
+ var ext_color_domain = [-2, 0.34, 0.37, 0.40, 0.43, 0.46]
+ var legend_labels = ["< .33", ".34 - .36", ".37 - .39", ".40 - .42", ".43 - .45", "< .46"]
+ var color = d3.scale.threshold()
+ .domain(color_domain)
+ .range(["#2166ac", "#67a9cf", "#d1e5f0", "#fddbc7", "#ef8a62", "#b2182b"]);
+ 
+var div = d3.select("body").append("div")
+ .attr("class", "tooltip")
+ .style("opacity", 0);
+ 
+var svg = d3.select("body").append("svg")
+ .attr("width", width)
+ .attr("height", height)
+ .style("margin", "10px auto");
+ var path = d3.geo.path()
+ 
+queue()
+ .defer(d3.json, "states.json")
+ .defer(d3.csv, "state_data.csv")
+ .await(ready);
+ 
+function ready(error, us, data) {
+ var pairIATWithId = {};
+ var pairNameWithId = {};
+ var pairSizeWithId = {};
+ 
+data.forEach(function(d) {
+ pairIATWithId[d.id] = +d.meanIAT;
+ pairNameWithId[d.id] = d.name;
+ pairSizeWithId[d.id] = d.size;
+ });
+ svg.append("g")
+ .attr("class", "state")
+ .selectAll("path")
+ .data(topojson.feature(us, us.objects.states).features)
+ .enter().append("path")
+ .attr("d", path)
+ .style ( "fill" , function (d) {
+ return color (pairIATWithId[d.id]);
+ })
+ .style("opacity", 0.8)
+ .on("mouseover", function(d) {
+ d3.select(this).transition().duration(300).style("opacity", 1);
+ div.transition().duration(300)
+ .style("opacity", 1)
+ div.text(pairNameWithId[d.id] + " : " + pairIATWithId[d.id] + " (N = " + pairSizeWithId[d.id] + ")")
+ .style("left", (d3.event.pageX) + "px")
+ .style("top", (d3.event.pageY -30) + "px");
+ })
+ .on("mouseout", function() {
+ d3.select(this)
+ .transition().duration(300)
+ .style("opacity", 0.8);
+ div.transition().duration(300)
+ .style("opacity", 0);
+ })
+ 
+ };
+ 
+var legend = svg.selectAll("g.legend")
+ .data(ext_color_domain)
+ .enter().append("g")
+ .attr("class", "legend");
+ 
+var ls_w = 20, ls_h = 20;
+ 
+legend.append("rect")
+ .attr("x", 20)
+ .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+ .attr("width", ls_w)
+ .attr("height", ls_h)
+ .style("fill", function(d, i) { return color(d); })
+ .style("opacity", 0.8);
+ 
+legend.append("text")
+ .attr("x", 50)
+ .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+ .text(function(d, i){ return legend_labels[i]; });
+ 
+</script>
+
+<p></p>
+Click <a href="county_map.html">here</a> for the map at the county-level (warning, low sample size).
+
+</body>
+</html>
