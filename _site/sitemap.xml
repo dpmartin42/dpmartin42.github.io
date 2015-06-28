@@ -1,167 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/school-selectR</loc>
     <lastmod>2015-04-16T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/visualizing-PI-data</loc>
     <lastmod>2015-03-14T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/on-to-Seattle</loc>
     <lastmod>2015-01-25T00:00:00-05:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/partial-dependence-1</loc>
     <lastmod>2014-12-23T00:00:00-05:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/brady-vs-rodgers</loc>
     <lastmod>2014-11-28T00:00:00-05:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/wizard-network</loc>
     <lastmod>2014-11-05T00:00:00-05:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/happy-halloween</loc>
     <lastmod>2014-10-31T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/dplyr-IAT</loc>
     <lastmod>2014-10-01T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/Naming-Babies</loc>
     <lastmod>2014-08-24T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/Piecewise-growth</loc>
     <lastmod>2014-07-29T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/first-post</loc>
     <lastmod>2014-07-22T00:00:00-04:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts/draft</loc>
     <lastmod>2011-02-25T00:00:00-05:00</lastmod>
-    <priority>0.8</priority>
   </url>
-  
-  
   <url>
     <loc>http://dpmartin42.github.io/404.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/about.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/academics.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/links.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/posts.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/research.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/teaching.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/visualizations.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/vita.html</loc>
-    <lastmod>2015-04-16T12:00:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
-  
-  
   <url>
     <loc>http://dpmartin42.github.io/projects/Harry_Potter/Harry_Potter_Network.html</loc>
-    <lastmod>2014-11-05T16:46:00Z</lastmod>
-    <priority>0.6</priority>
+    <lastmod>2014-11-05T16:46:00-05:00</lastmod>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/projects/IAT_Map/county_map.html</loc>
-    <lastmod>2015-03-13T16:06:50Z</lastmod>
-    <priority>0.6</priority>
+    <lastmod>2015-03-13T16:06:50-04:00</lastmod>
   </url>
-  
   <url>
     <loc>http://dpmartin42.github.io/projects/IAT_Map/state_map.html</loc>
-    <lastmod>2015-03-13T16:05:03Z</lastmod>
-    <priority>0.6</priority>
+    <lastmod>2015-03-13T16:05:03-04:00</lastmod>
   </url>
-  
 </urlset>
