@@ -2,3 +2,9 @@
 	path = projects/IAT_Map
 	url = git://github.com/dpmartin42/iat-map
 
+[submodule "projects/School_SelectR"]
+	path = projects/School_SelectR
+	url = git://github.com/dpmartin42/school-selectR
+[submodule "projects/babynameR"]
+	path = projects/babynameR
+	url = git://github.com/dpmartin42.babynameR
