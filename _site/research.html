@@ -76,7 +76,7 @@
 
 <p style="border: 2px solid #333"></p>
 
-<h3><font size = 5>Unsupervised Learning for Longitudinal Data</font></h3>
+<h3><font size = 5>Unsupervised Learning for Multilevel Data (Longitudinal)</font></h3>
 
   The incorporation of exploratory longitudinal analysis techniques, namely identifying hetereogeneous sub-populations based on longitudinal trajectories,
   can provide new avenues to answer theoretically interesting research questions that often remain unanswered after traditional confirmatory measures
@@ -84,15 +84,21 @@
   Recent simulations have found that this analytic method shows a decline in performance for smaller sample sizes commonly found in psychological research.
   This raises the question: are there better methods available for smaller sample sizes? Using Monte Carlo simulations, I compared growth mixture models with
   other clustering methods, ranging on a spectrum from not-informed to very-informed, across different simulation conditions. Results indicated that despite this
-  decreased performance for smaller sample sizes, growth mixture models still outperform simpler, more general clustering methods.
+  decreased performance for smaller sample sizes, growth mixture models still outperform simpler, more general clustering methods. The paper for this project
+  can be seen <a href="extrasGMMSampSize.pdf" target="_blank">here</a>.
+
+<h3><font size = 5>Supervised Learning for Multilevel Data (Cross-sectional)</font></h3>
   
-<h3><font size = 5>Supervised Learning for Multilevel Data</font></h3>
-  
-  There is an increasing number of datasets with a large amount of participants, variables, or both, in education and other fields that often deal with
-  multilevel data structures. With this increase of information, it becomes necessary to be able to efficiently identify variables of interest for further study on a validation
-  set or for a future project. Unfortunately, very little work has been done on investigating the performance of popular data mining techniques, such as those based on
-  recursive partitioning, when applied to multilevel data structures. I am currently exploring these ideas further for my dissertation project. My dissertation proposal can
-  be seen <a href="extras/proposal.pdf" target="_blank">here</a>.
+  There is an increasing number of datasets with many participants, many variables, or both, found in education and other areas of the social sciences that commonly have complex, multilevel data
+  structures. Once initial confirmatory hypotheses are exhausted, it can be difficult to determine how best to explore these data sets to discover hidden relationships that could help to inform 
+  future research. Typically, exploratory data analysis in these areas are performed with the very same statistical tools as confirmatory data analysis, leading to potential methodological 
+  issues such as increased rates of false positive findings. My dissertation proposed that the utilization of a popular data mining framework known as recursive partitioning could offer a 
+  more efficient means to perform exploratory data analysis to identify variables that may have been overlooked initially in the confirmatory data analysis phase. By adopting such a non-parametric 
+  approach, researchers can easily identify the extent to which all variables are related to an outcome, rather than rely on null hypothesis significance tests as a strict dichotomization of whether 
+  a given variable is “important” or “unimportant.” I evaluated the feasibility of using these methods in multilevel contexts commonly found in social science research by using both Monte Carlo 
+  simulations and three applied examples from education. Results indicated that while potential variable bias does occur in situations where variables are measured at multiple levels of analysis,
+  these methods still prove to be a cost-effective way to revisit old datasets to discover something new in a data-driven way. A copy of my dissertation can be seen
+  <a href="extras/dissertation.pdf" target="_blank">here</a>.
 
 <h3><font size = 5>Crowdsourcing Research: Many Analysts, One Dataset</font></h3>
 
@@ -100,16 +106,20 @@
   However, there are often a variety of defensible analytic strategies that could be used on the same data.
   <a href="http://www.jbs.cam.ac.uk/programmes/research-programmes/phd/phd-students-a-z/raphael-silberzahn/">Raphael Silberzahn</a>,
   <a href="http://www.socialjudgments.com/">Eric Uhlmann</a>, <a href="http://projectimplicit.net/nosek/">Brian Nosek</a>,
-  and I are currently pursuing a project examining this potential variability in more detail. If you are interested in finding out
-  more information, please see our <a href="https://osf.io/gvm2z/">project website</a> on the Open Science Framework.
+  and I created a project to quantify this variability. Twenty-nine teams involving 61 analysts used the same dataset to address the
+  same research questions: whether soccer referees are more likely to give red cards to dark skin toned players than light skin toned
+  players. Analytic approaches varied widely across teams, and estimated effect sizes ranged from 0.89 to 2.93 in odds ratio units, with 
+  a median of 1.31. Twenty teams (69%) found a statistically significant positive effect and nine teams (31%) observed a non-significant
+  relationship. More information can be seen on the <a href="https://osf.io/gvm2z/">project website</a>.
  
 <h3><font size = 5>Student Engagement in Elementary School Mathematics</font></h3>
 
   In collaboration with <a href="http://people.virginia.edu/~ser4x/">Dr. Sara Rimm-Kaufman's</a> <a href="http://www.socialdevelopmentlab.org/">
-  Social Development Lab</a> in the Curry School of Education, I am working on a project assessing how student engagement in math is related to both
+  Social Development Lab</a> in the Curry School of Education, I assessing how student engagement in math is related to both
   math self-efficacy and teacher-student interactions. We found that we found that there was a positive relationship between student self-efficacy in math
   and both social and emotional engagement in math. However, this effect was only present in classrooms with low to average levels of teacher emotional support.
   In classrooms with high levels of teacher emotional support, students reported similar levels of both social and emotional engagement, regardless of self-efficacy.
+  The paper for this project can be seen <a href="extras/JSP_R4.pdf" target="_blank">here</a>
 
 </section>
 
