@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Partial Dependence Plots - Part 1
+title: Partial Dependence Plots
 categories: stuff, r-bloggers
 ---
 
@@ -96,7 +96,5 @@ persp(x = var1_vals, y = var2_vals, z = z, theta = -45,
 
 Again, this figure shows the partial dependence plot between both out-of-state tuition and percent of alumni donating to the institution, resulting in a three-dimensional plot. Both variables have positive relationships with the outcome, such that increased values in each variable correspond to an increase in the predicted graduation rate of a particular institution. Note that because both variables have consistent relations with predicted graduation rate across the values of the other variable, there is no substantial evidence for an interaction.
 
-Like I said before, the following code can be slow. The bottleneck for this implementation (which mirrors the partial dependence plot in the randomForest package) is with the predict function across the replicate data sets, which takes about 30 seconds on my machine. A more efficient method to perform these plots does exist, and is known as a weighted tree traversal. More information regarding this implementation can be found at the bottom of [this page](http://scikit-learn.org/stable/modules/ensemble.html), which outlines the procedure in scikit-learn for gradient boosted models. 
-
-I have been messing around with a corresponding implementation for this in R, and hopefully my next post will be a follow up to these ideas. Stay tuned for Part 2!
+Like I said before, the following code can be slow. The bottleneck for this implementation (which mirrors the partial dependence plot in the randomForest package) is with the predict function across the replicate data sets, which takes about 30 seconds on my machine. A more efficient method to perform these plots does exist, and is known as a weighted tree traversal. More information regarding this implementation can be found at the bottom of [this page](http://scikit-learn.org/stable/modules/ensemble.html), which outlines the procedure in scikit-learn for gradient boosted models.
 

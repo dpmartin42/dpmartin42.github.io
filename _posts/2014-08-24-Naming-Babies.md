@@ -4,7 +4,7 @@ title: R, Shiny, and Naming Babies
 category: stuff
 ---
 
-As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful ~~error~~ messages to inform the user when something is not going according to plan.
+As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful error messages to inform the user when something is not going according to plan.
 
 In the case of visualizing baby naming trends, a major component of interactivity is the ability of the user to search specific names and genders. Because the babynames data is not entirely exhaustive (only names with greater than 5 instances in a given year are included), I had an empty graph pop up for my trend plot and an error message render for my table of frequency counts.
 

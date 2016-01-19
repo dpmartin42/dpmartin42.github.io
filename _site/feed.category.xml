@@ -7,7 +7,7 @@
 		<atom:link href="http://dpmartin42.github.io/feed.category.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
-				<title>Partial Dependence Plots - Part 1</title>
+				<title>Partial Dependence Plots</title>
 				<description>&lt;p&gt;It can be difficult to understand the functional relations between predictors and an outcome when using black box prediction methods like random forests. One way to investigate these relations is with partial dependence plots. These plots are graphical visualizations of the marginal effect of a given variable (or multiple variables) on an outcome. Typically, these are restricted to only one or two variables due to the limits of human perception, and thus may be misleading due to hidden higher-order interactions. Despite this, partial dependence plots can still be extremely useful for knowledge discovery in large data sets, especially when the random forest is dominated by lower-order interactions and main effects.&lt;/p&gt;
 
 &lt;p&gt;Following the notation of Hastie et al. (2009) in &lt;em&gt;The Elements of Statistical Learning&lt;/em&gt;, partial dependence plots can be mathematically defined as follows. Suppose &lt;script type=&quot;math/tex&quot;&gt;S&lt;/script&gt; is a subset of &lt;script type=&quot;math/tex&quot;&gt;p&lt;/script&gt; predictor variables, such that &lt;script type=&quot;math/tex&quot;&gt;S \subset \left\{X_1, X_2, \ldots, X_p\right\}&lt;/script&gt;. Let &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; be a complement to &lt;script type=&quot;math/tex&quot;&gt;S&lt;/script&gt;, such that &lt;script type=&quot;math/tex&quot;&gt;S \cup C = \left\{X_1, X_2, \ldots, X_p\right\}&lt;/script&gt;. The random forest predictor function, &lt;script type=&quot;math/tex&quot;&gt;f(X)&lt;/script&gt;, will depend upon all &lt;script type=&quot;math/tex&quot;&gt;p&lt;/script&gt; predictor variables. Thus, &lt;script type=&quot;math/tex&quot;&gt;f(X) = f(X_S, X_C)&lt;/script&gt;. The partial dependence of the &lt;script type=&quot;math/tex&quot;&gt;S&lt;/script&gt; predictors on the predictive function &lt;script type=&quot;math/tex&quot;&gt;f(X)&lt;/script&gt; is&lt;/p&gt;
@@ -94,12 +94,10 @@ persp&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot
 
 &lt;p&gt;Like I said before, the following code can be slow. The bottleneck for this implementation (which mirrors the partial dependence plot in the randomForest package) is with the predict function across the replicate data sets, which takes about 30 seconds on my machine. A more efficient method to perform these plots does exist, and is known as a weighted tree traversal. More information regarding this implementation can be found at the bottom of &lt;a href=&quot;http://scikit-learn.org/stable/modules/ensemble.html&quot;&gt;this page&lt;/a&gt;, which outlines the procedure in scikit-learn for gradient boosted models.&lt;/p&gt;
 
-&lt;p&gt;I have been messing around with a corresponding implementation for this in R, and hopefully my next post will be a follow up to these ideas. Stay tuned for Part 2!&lt;/p&gt;
-
 </description>
 				<pubDate>Tue, 23 Dec 2014 00:00:00 -0500</pubDate>
-				<link>http://dpmartin42.github.io/posts/partial-dependence-1</link>
-				<guid isPermaLink="true">http://dpmartin42.github.io/posts/partial-dependence-1</guid>
+				<link>http://dpmartin42.github.io/posts/partial-dependence</link>
+				<guid isPermaLink="true">http://dpmartin42.github.io/posts/partial-dependence</guid>
 			</item>
 		
 	</channel>
