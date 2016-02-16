@@ -86,34 +86,34 @@
 
 <p>The great thing is that it only took me about an hour or so to convert the code over to dplyr. Let’s benchmark this updated function using dplyr to see if it’s an improvement over my old code. For this benchmark, we will be using sample IAT data included in the IAT package (N = 49, number of rows = 6566), and I replicated each function 100 times</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># install if necessary</span>
-<span class="c1"># install.packages(&quot;IAT&quot;)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># install if necessary
+# install.packages("IAT")
+</span>
+<span class="n">require</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+<span class="n">require</span><span class="p">(</span><span class="n">IAT</span><span class="p">)</span>
+<span class="n">require</span><span class="p">(</span><span class="n">rbenchmark</span><span class="p">)</span>
 
-<span class="kn">require</span><span class="p">(</span>dplyr<span class="p">)</span>
-<span class="kn">require</span><span class="p">(</span>IAT<span class="p">)</span>
-<span class="kn">require</span><span class="p">(</span>rbenchmark<span class="p">)</span>
+<span class="n">myData</span> <span class="o">&lt;-</span> <span class="n">IATData</span><span class="p">[</span><span class="n">IATData</span><span class="o">$</span><span class="n">isCongruentFirst</span> <span class="o">==</span> <span class="m">1</span><span class="p">,</span> <span class="p">]</span>
 
-myData <span class="o">&lt;-</span> IATData<span class="p">[</span>IATData<span class="o">$</span>isCongruentFirst <span class="o">==</span> <span class="m">1</span><span class="p">,</span> <span class="p">]</span>
-
-benchmark<span class="p">(</span>replications <span class="o">=</span> <span class="m">100</span><span class="p">,</span>
+<span class="n">benchmark</span><span class="p">(</span><span class="n">replications</span> <span class="o">=</span> <span class="m">100</span><span class="p">,</span>
           
-  old_way <span class="o">=</span> cleanIAT<span class="p">(</span>
-    myData <span class="o">=</span> myData<span class="p">,</span>
-    blockName <span class="o">=</span> <span class="s">&quot;BLOCK_NAME_S&quot;</span><span class="p">,</span>
-    trialBlocks <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;BLOCK2&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK3&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK5&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK6&quot;</span><span class="p">),</span>
-    sessionID <span class="o">=</span> <span class="s">&quot;SESSION_ID&quot;</span><span class="p">,</span>
-    trialLatency <span class="o">=</span> <span class="s">&quot;TRIAL_LATENCY&quot;</span><span class="p">,</span>
-    trialError <span class="o">=</span> <span class="s">&quot;TRIAL_ERROR&quot;</span><span class="p">,</span>
-    vError <span class="o">=</span> <span class="m">1</span><span class="p">,</span> vExtreme <span class="o">=</span> <span class="m">2</span><span class="p">,</span> vStd <span class="o">=</span> <span class="m">1</span><span class="p">),</span>
+  <span class="n">old_way</span> <span class="o">=</span> <span class="n">cleanIAT</span><span class="p">(</span>
+    <span class="n">myData</span> <span class="o">=</span> <span class="n">myData</span><span class="p">,</span>
+    <span class="n">blockName</span> <span class="o">=</span> <span class="s2">"BLOCK_NAME_S"</span><span class="p">,</span>
+    <span class="n">trialBlocks</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">"BLOCK2"</span><span class="p">,</span> <span class="s2">"BLOCK3"</span><span class="p">,</span> <span class="s2">"BLOCK5"</span><span class="p">,</span> <span class="s2">"BLOCK6"</span><span class="p">),</span>
+    <span class="n">sessionID</span> <span class="o">=</span> <span class="s2">"SESSION_ID"</span><span class="p">,</span>
+    <span class="n">trialLatency</span> <span class="o">=</span> <span class="s2">"TRIAL_LATENCY"</span><span class="p">,</span>
+    <span class="n">trialError</span> <span class="o">=</span> <span class="s2">"TRIAL_ERROR"</span><span class="p">,</span>
+    <span class="n">vError</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">vExtreme</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">vStd</span> <span class="o">=</span> <span class="m">1</span><span class="p">),</span>
   
-  new_way <span class="o">=</span> cleanIAT_NEW<span class="p">(</span>
-    myData <span class="o">=</span> myData<span class="p">,</span>
-    blockName <span class="o">=</span> <span class="s">&quot;BLOCK_NAME_S&quot;</span><span class="p">,</span>
-    trialBlocks <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;BLOCK2&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK3&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK5&quot;</span><span class="p">,</span> <span class="s">&quot;BLOCK6&quot;</span><span class="p">),</span>
-    sessionID <span class="o">=</span> <span class="s">&quot;SESSION_ID&quot;</span><span class="p">,</span>
-    trialLatency <span class="o">=</span> <span class="s">&quot;TRIAL_LATENCY&quot;</span><span class="p">,</span>
-    trialError <span class="o">=</span> <span class="s">&quot;TRIAL_ERROR&quot;</span><span class="p">,</span>
-    vError <span class="o">=</span> <span class="m">1</span><span class="p">,</span> vExtreme <span class="o">=</span> <span class="m">2</span><span class="p">,</span> vStd <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+  <span class="n">new_way</span> <span class="o">=</span> <span class="n">cleanIAT_NEW</span><span class="p">(</span>
+    <span class="n">myData</span> <span class="o">=</span> <span class="n">myData</span><span class="p">,</span>
+    <span class="n">blockName</span> <span class="o">=</span> <span class="s2">"BLOCK_NAME_S"</span><span class="p">,</span>
+    <span class="n">trialBlocks</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">"BLOCK2"</span><span class="p">,</span> <span class="s2">"BLOCK3"</span><span class="p">,</span> <span class="s2">"BLOCK5"</span><span class="p">,</span> <span class="s2">"BLOCK6"</span><span class="p">),</span>
+    <span class="n">sessionID</span> <span class="o">=</span> <span class="s2">"SESSION_ID"</span><span class="p">,</span>
+    <span class="n">trialLatency</span> <span class="o">=</span> <span class="s2">"TRIAL_LATENCY"</span><span class="p">,</span>
+    <span class="n">trialError</span> <span class="o">=</span> <span class="s2">"TRIAL_ERROR"</span><span class="p">,</span>
+    <span class="n">vError</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">vExtreme</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">vStd</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
   
           <span class="p">)</span></code></pre></div>
 
@@ -130,12 +130,12 @@ benchmark<span class="p">(</span>replications <span class="o">=</span> <span cla
 
 <p>You can get access to this quicker function in the development version of the IAT package on my <a href="https://github.com/dpmartin42/IAT">GitHub</a> using devtools. See the code below for installation instructions:</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># install devtools if necessary</span>
-<span class="c1"># install.packages(&quot;devtools&quot;)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># install devtools if necessary
+# install.packages("devtools")
+</span>
+<span class="n">require</span><span class="p">(</span><span class="n">devtools</span><span class="p">)</span>
 
-<span class="kn">require</span><span class="p">(</span>devtools<span class="p">)</span>
-
-install_github<span class="p">(</span>repo <span class="o">=</span> <span class="s">&quot;IAT&quot;</span><span class="p">,</span> username <span class="o">=</span> <span class="s">&quot;dpmartin42&quot;</span><span class="p">)</span></code></pre></div>
+<span class="n">install_github</span><span class="p">(</span><span class="n">repo</span> <span class="o">=</span> <span class="s2">"IAT"</span><span class="p">,</span> <span class="n">username</span> <span class="o">=</span> <span class="s2">"dpmartin42"</span><span class="p">)</span></code></pre></div>
 
 
   

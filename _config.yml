@@ -2,7 +2,7 @@ markdown: kramdown
 permalink: /posts/:title
 rdiscount:
   extensions: [smart]
-highlighter: pygments
+highlighter: rouge
   
 # Settings for analytics helper
 # Set 'provider' to the analytics provider you want to use.
