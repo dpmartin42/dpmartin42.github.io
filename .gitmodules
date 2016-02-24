@@ -7,3 +7,6 @@
 [submodule "projects/School_SelectR"]
 	path = projects/School_SelectR
 	url = https://github.com/dpmartin42/school-selectR.git
+[submodule "projects/foodfindr"]
+	path = projects/foodfindr
+	url = https://github.com/dpmartin42/foodfindr.git
