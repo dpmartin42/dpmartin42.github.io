@@ -27,14 +27,29 @@ polygon(c(-0.5, 0, 0.5), c(4, 5, 4), col = "black")
 polygon(c(-2, -1.5, 1.5,  2), c(3, 1.5, 1.5, 3), col = "black")
 
 # top teeth
-rect(-0.25, 2.5, 0.25, 3.1, col = "darkorange", border = "darkorange", lwd = 0)
-rect(-1.5, 2.5, -1, 3.1, col = "darkorange", border = "darkorange", lwd = 0)
-rect(1.5, 2.5, 1, 3.1, col = "darkorange", border = "darkorange", lwd = 0)
+rect(-0.25, 2.5, 0.25, 3.1,
+     col = "darkorange",
+     border = "darkorange",
+     lwd = 0)
+rect(-1.5, 2.5, -1, 3.1,
+     col = "darkorange",
+     border = "darkorange",
+     lwd = 0)
+rect(1.5, 2.5, 1, 3.1,
+     col = "darkorange",
+     border = "darkorange",
+     lwd = 0)
 
 # bottom teeth
-rect(0.3, 1.4, 0.9, 2, col = "darkorange", border = "darkorange", lwd = 0)
-rect(-0.3, 1.4, -0.9, 2, col = "darkorange", border = "darkorange", lwd = 0)
+rect(0.3, 1.4, 0.9, 2,
+     col = "darkorange",
+     border = "darkorange",
+     lwd = 0)
+rect(-0.3, 1.4, -0.9, 2,
+     col = "darkorange",
+     border = "darkorange",
+     lwd = 0)
 {% endhighlight %}
 
-![center](/figs/2014-10-31-happy-halloween/unnamed-chunk-1.png) 
+![center](/figs/2014-10-31-happy-halloween/unnamed-chunk-1-1.png)
 

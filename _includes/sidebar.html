@@ -1,0 +1,59 @@
+<!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item">
+    
+    <center>
+    <img style="max-height: 200px; height: 80%; width: 80%; border-radius: 50%" src="/extras/DanielPMartin.jpeg" align="middle"></a></img>
+    </center>
+    
+    <p>{{ site.description }}</p>
+    
+    <p>
+    
+    <div style = "font-size: 30px">
+    
+    <script>
+      emailE = ('dpmartin42@' + 'gmail.com')
+	  document.write('<a href="mailto:' + emailE + '"><i class="fa fa-envelope-square"></i></a>')
+	</script>
+    
+    <a href="https://github.com/dpmartin42"><i class="fa fa-github"></i></a>
+    
+    <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
+    
+    <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
+    
+    </div>
+    
+  </div>
+  
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item{% if page.url == site.baseurl %} active{% endif %}" href="{{ site.baseurl }}/">Home</a>
+
+    {% comment %}
+      The code below dynamically generates a sidebar nav of pages with
+      `layout: page` in the front-matter. See readme for usage.
+    {% endcomment %}
+
+    {% assign pages_list = site.pages | sort:"url" %}
+    {% for node in pages_list %}
+      {% if node.title != null %}
+        {% if node.layout == "page" %}
+          <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      &copy; {{ site.time | date: '%Y' }}. All rights reserved.
+    </p>
+  </div>
+</div>

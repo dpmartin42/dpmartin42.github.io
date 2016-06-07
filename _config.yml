@@ -1,13 +1,24 @@
-markdown: kramdown
-permalink: /posts/:title
-rdiscount:
-  extensions: [smart]
-highlighter: rouge
-  
-# Settings for analytics helper
-# Set 'provider' to the analytics provider you want to use.
-# Set 'provider' to false to turn analytics off globally.
-#        
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
+
+# Setup
+title:               Wicked Good Data
+tagline:             'Website and blog of Daniel P. Martin'
+description:         'Quantitative Psychology PhD and Data Scientist at McKinsey & Company.'
+url:                 http://dpmartin42.github.io
+baseurl:             ''
+paginate:            5
+
+# About/contact
+author:
+  name:              Dan Martin
+  email:             dpmartin42@gmail.com
+
+# Set up google analytics
+
 analytics :
   provider : google
   google : 
@@ -15,10 +26,5 @@ analytics :
   getclicky :
     site_id : UA-26032429-1
 
-gems:
-  - jekyll-sitemap
-
-name: Dan Martin
-url: http://dpmartin42.github.io
-description: This is the academic website and blog of Daniel P. Martin
-
+# Custom vars
+version:             1.0.0

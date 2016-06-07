@@ -1,12 +1,9 @@
 ---
-layout: layout
+layout: default
+title: Home
 ---
 
 <section class="content">
-
-<h1>Wicked Good Data</h1>
- 
-<p style="border: 2px solid #333"></p>
  
   {% assign post = site.posts.first %}
   {% assign content = post.content %}
@@ -15,9 +12,11 @@ layout: layout
     <a href="{{ post.url }}">{{ post.title }}</a>
   </h2>
 
-  <section class="byline">
-    {{ post.date | date: "%B %e, %Y" }}
+  <section class="post-date">
+    {{ post.date | date: '%B %d, %Y' }}
   </section>
+  
+  <p>
   
 	{{ post.content | split:'<!--more-->' | first }}
   
@@ -39,14 +38,8 @@ layout: layout
       <a href="{{ post.url }}#disqus_thread">Comments</a>
 
     </section>
+    
+    <p>
 
 
 </section>
-
-
-
-
-
-
-
-
