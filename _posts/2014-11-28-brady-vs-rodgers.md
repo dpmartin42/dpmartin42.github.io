@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Brady/Rodgers Showdown
-category: stuff
 ---
 
 With the way both teams are playing right now, this could be the first look at a possible Super Bowl matchup. As of the Friday before the game, various websites have the Packers as three-point favorites at home. In thinking about the outcome of the game, I realized I did not know the Packers' offense that well. Of course Rodgers has been playing great, but who does he favor as targets? What part of the field does he like to throw to? It seems like I always see a bomb or two to Jordy Nelson on SportsCenter. To get a better idea, I tried to find some data to get a better look at who Brady and Rodgers are targeting and where. Luckily, I was able to find a play-by-play data set from the beginning of 2014 season to the present, which is freely available from [NFLsavant.com](http://nflsavant.com/about.php). 

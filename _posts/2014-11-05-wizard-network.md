@@ -1,7 +1,6 @@
 ---
 layout: post
 title: The Wizarding Network of Harry Potter
-category: stuff
 ---
 
 I spent part of my summer as an intern at the [Center for Open Science](http://centerforopenscience.org/). I wanted to become more familiar with JavaScript (I never used it before the internship), so I carved out my own project to create a better network visualization of users on the [Open Science Framework](https://osf.io/). This way, researchers could see who is working with whom, and on what projects. 

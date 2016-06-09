@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Happy Halloween!
-category: stuff
 ---
 
 [Christmas](http://simplystatistics.org/2012/12/24/make-a-christmas-tree-in-r-with-random-ornamentspresents/) gets all the love when creating holiday-themed plots in R. Halloween is great too, so here's a snippet of code for making a simple jack-o'-lantern in R.

@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Visualizing Implicit Racial Bias
-category: stuff
 ---
 
 For this project, I was looking to get more experience with D3.js and choropleths (I just find them to be fun visualization tools). Luckily, Project Implicit recently uploaded data from a few million participants they have been collecting over the past 10 years on a variety of different Implicit Association Tests (IATs), some of which have state and county information of those taking the test.

@@ -1,7 +1,6 @@
 ---
 layout: post
 title: We're on to Seattle
-category: stuff
 ---
 
 Unfortunately the [Pats/Packers Super Bowl Prediction](http://dpmartin42.github.io/posts/brady-vs-rodgers/) I made in Week 13 came up just short. To get my mind off of the Patriots' football inflation tendencies and back on to the upcoming Super Bowl next week, I decided to update my previous football post where I looked at play-by-play data to visualize on-the-field pass distribution between the Pats and the Packers. I do the same here, but I also include rushing plays because the Seahawks are more of a run-heavy offense.

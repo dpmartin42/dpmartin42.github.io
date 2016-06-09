@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Fitting Piecewise Growth Models in R
-category: stuff
 ---
 
 This is a simple walkthrough on how to specify a piecewise linear growth model in R using the lme4 package. Just as a quick outline, I will start with a simple linear growth pattern, then extend the logic to look at piecewise growth.

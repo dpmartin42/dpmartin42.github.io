@@ -1,7 +1,6 @@
 ---
 layout: post
 title: R, Shiny, and Naming Babies
-category: stuff
 ---
 
 As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful error messages to inform the user when something is not going according to plan.

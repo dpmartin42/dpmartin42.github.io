@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Partial Dependence Plots
-categories: r
+category: r
 ---
 
 It can be difficult to understand the functional relations between predictors and an outcome when using black box prediction methods like random forests. One way to investigate these relations is with partial dependence plots. These plots are graphical visualizations of the marginal effect of a given variable (or multiple variables) on an outcome. Typically, these are restricted to only one or two variables due to the limits of human perception, and thus may be misleading due to hidden higher-order interactions. Despite this, partial dependence plots can still be extremely useful for knowledge discovery in large data sets, especially when the random forest is dominated by lower-order interactions and main effects. 

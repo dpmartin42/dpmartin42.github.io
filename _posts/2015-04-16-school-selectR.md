@@ -1,7 +1,6 @@
 ---
 layout: post
 title: School SelectR
-category: stuff
 ---
 
 To get more experience with recommendation engines, I decided to try and create one using publicly available data from the National Center of Education statistics on college institutional characteristics. The end product is a [content-based recommendation engine](http://en.wikipedia.org/wiki/Recommender_system#Content-based_filtering) designed to take user input and output a table listing 4-year private and public colleges that best match this input. The recommendations are based on the [Gower dissimilarity index](https://stat.ethz.ch/R-manual/R-patched/library/cluster/html/daisy.html), which can take variables of multiple types and also allows unique variable weights. The final result is an index on a scale from 0 to 1, where 1 represents a perfect match.
