@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Foodfindr - Your guide to local, healthy dining in Boston 
+title: Foodfindr - Your guide to local, healthy dining in Boston
 ---
 
 To help with the transition from academia to data science, I participated in the inaugural session of the [Insight Health Data Science](http://insighthealthdata.com/) program in Boston, MA back in July 2015. As part of the program, the first four weeks are spent creating a data science project that typically comes in the form of an interactive web application on a (health-related) topic of your choosing. After going through a few ideas in my head, I decided to focus on a project that would give me some NLP/webscraping experience, and (arguably more importantly) get me acquainted with the massive number of restaurants in the Greater Boston area. 
