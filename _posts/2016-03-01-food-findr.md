@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Foodfindr - Your guide to local, healthy dining in Boston
+title: Foodfindr - Your guide to local, healthy dining in Boston 
+category: stuff
 ---
 
 To help with the transition from academia to data science, I participated in the inaugural session of the [Insight Health Data Science](http://insighthealthdata.com/) program in Boston, MA back in July 2015. As part of the program, the first four weeks are spent creating a data science project that typically comes in the form of an interactive web application on a (health-related) topic of your choosing. After going through a few ideas in my head, I decided to focus on a project that would give me some NLP/webscraping experience, and (arguably more importantly) get me acquainted with the massive number of restaurants in the Greater Boston area. 
@@ -15,7 +16,16 @@ After some research, I ultimately decided on using the following workflow:
   4. Categorize the predicted probabilities into low (1st quartile - red), medium (2nd and 3rd quartiles - yellow), and high (4th quartile - green)
   5. Create an interactive web application using R and Shiny, and deploy to an AWS instance
 
-Given that the notion of health was itself dependent upon the assumptions I made with assigning labels, validation of results was key. In addition to internal validation metrics (0.87 AUC estimated via 5-fold cross-validation), I also performed external validation in three ways. The first was to look at variable importance and partial dependence plots of the top predictors to ensure they made intuitive sense. They did, with words like turkey, cucumber, and hummus having high predictive power in a positive direction, and words like fried, sauce, and provolone having high predictive power in a negative direction. The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen at [food-findr.com](http://food-findr.com). 
+Given that the notion of health was itself dependent upon the assumptions I made with assigning labels, validation of results was key. First, I calculated AUC as a measure of internal validation using 5-fold cross-validation. The image of the ROC curve can be seen below:
+
+![center](/figs/2016-03-01-food-findr/ROC.png)
+
+In addition to internal validation, I also performed external validation in three ways. The first was to look at variable importance and partial dependence plots of the top predictors to ensure they made intuitive sense. They did, with words like turkey, cucumber, and hummus having high predictive power in a positive direction, and words like fried, sauce, and provolone having high predictive power in a negative direction. A variable importance plot of the most important food words can be seen below:
+
+
+![center](/figs/2016-03-01-food-findr/VarImp.png)
+
+The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen at [food-findr.com](http://food-findr.com). 
 
 The most difficult part of this project was trying to come up with a way to label restaurants as healthy/not healthy for the purposes of training the model. I actually first tried a simple scoring method by trying to come up with a overall health score for each unique food word based on its nutritional properties for a single serving using a nutrition website API. I also tried an unsupervised approach by clustering the bag of words into distinct groups, which I would then label by hand. Both approaches gave nonsensical results and I ultimately went with the workflow outlined above.
 
