@@ -7,6 +7,327 @@
 		<atom:link href="http://dpmartin42.github.io/feed.r.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Clustering Mixed Data Types in R</title>
+        <description>&lt;p&gt;Clustering allows us to better understand how a sample might be comprised of distinct subgroups given a set of variables. While many introductions to cluster analysis typically review a simple application using continuous variables, clustering data of mixed types (e.g., continuous, ordinal, and nominal) is often of interest. The following is an overview of one approach to clustering data of mixed types using Gower distance, partitioning around medoids, and silhouette width.&lt;/p&gt;
+
+&lt;p&gt;In total, there are three related decisions that need to be taken for this approach:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;#calculating-distance&quot;&gt;Calculating distance&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#choosing-a-clustering-algorithm&quot;&gt;Choosing a clustering algorithm&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#selecting-the-number-of-clusters&quot;&gt;Selecting the number of clusters&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For illustration, the publicly available “College” dataset found in the ISLR package will be used, which has various statistics of US Colleges from 1995 (N = 777). To highlight the challenge of handling mixed data types, variables that are both categorical and continuous will be used and are listed below:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Continuous
+    &lt;ul&gt;
+      &lt;li&gt;Acceptance rate&lt;/li&gt;
+      &lt;li&gt;Out of school tuition&lt;/li&gt;
+      &lt;li&gt;Number of new students enrolled&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Categorical
+    &lt;ul&gt;
+      &lt;li&gt;Whether a college is public/private&lt;/li&gt;
+      &lt;li&gt;Whether a college is elite, defined as having more than 50% of new students who graduated in the top 10% of their high school class&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The code was run using R version 3.2.2 with the following packages:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1680&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for reproducibility&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;dplyr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for data cleaning&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;ISLR&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for college dataset&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cluster&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for gower similarity and pam&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Rtsne&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for t-SNE plot&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;ggplot2&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for visualization&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Before clustering can begin, some data cleaning must be done:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Acceptance rate is created by diving the number of acceptances by the number of applications&lt;/li&gt;
+  &lt;li&gt;isElite is created by labeling colleges with more than 50% of their new students who were in the top 10% of their high school class as elite&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;college_clean &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; College &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;row.names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+         accept_rate &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Accept&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;Apps&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         isElite &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;cut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Top10perc&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                       breaks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                       labels &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Not Elite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Elite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                       include.lowest &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;isElite &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;isElite&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;name&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; accept_rate&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Outstate&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Enroll&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         Grad.Rate&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Private&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; isElite&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+glimpse&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;college_clean&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Observations: 777
+## Variables: 7
+## $ name        (chr) &amp;quot;Abilene Christian University&amp;quot;, &amp;quot;Ad...
+## $ accept_rate (dbl) 0.7421687, 0.8801464, 0.7682073, 0....
+## $ Outstate    (dbl) 7440, 12280, 11250, 12960, 7560, 13...
+## $ Enroll      (dbl) 721, 512, 336, 137, 55, 158, 103, 4...
+## $ Grad.Rate   (dbl) 60, 56, 54, 59, 15, 55, 63, 73, 80,...
+## $ Private     (fctr) Yes, Yes, Yes, Yes, Yes, Yes, Yes,...
+## $ isElite     (fctr) Not Elite, Not Elite, Not Elite, E...&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;calculating-distance&quot;&gt;Calculating Distance&lt;/h2&gt;
+
+&lt;p&gt;In order for a yet-to-be-chosen algorithm to group observations together, we first need to define some notion of (dis)similarity between observations. A popular choice for clustering is Euclidean distance. However, Euclidean distance is only valid for continuous variables, and thus is not applicable here. In order for a clustering algorithm to yield sensible results, we have to use a distance metric that can handle mixed data types. In this case, we will use something called Gower distance.&lt;/p&gt;
+
+&lt;h3 id=&quot;gower-distance&quot;&gt;Gower distance&lt;/h3&gt;
+
+&lt;p&gt;The concept of Gower distance is actually quite simple. For each variable type, a particular distance metric that works well for that type is used and scaled to fall between 0 and 1. Then, a linear combination using user-specified weights (most simply an average) is calculated to create the final distance matrix. The metrics used for each data type are described below:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;quantitative (interval): range-normalized &lt;a href=&quot;https://en.wikipedia.org/wiki/Taxicab_geometry&quot;&gt;Manhattan distance&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;ordinal: variable is first ranked, then Manhattan distance is used with a special adjustment for ties&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;nominal: variables of &lt;em&gt;k&lt;/em&gt; categories are first converted into &lt;em&gt;k&lt;/em&gt; binary columns and then the &lt;a href=&quot;http://stats.stackexchange.com/a/55802/21654&quot;&gt;Dice coefficient&lt;/a&gt; is used&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;pros&lt;/strong&gt;: Intuitive to understand and straightforward to calculate&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;cons&lt;/strong&gt;: Sensitive to non-normality and outliers present in continuous variables, so transformations as a pre-processing step might be necessary. Also requires an NxN distance matrix to be calculated, which is computationally intensive to keep in-memory for large samples&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Below, we see that Gower distance can be calculated in one line using the &lt;strong&gt;daisy&lt;/strong&gt; function. Note that due to positive skew in the Enroll variable, a log transformation is conducted internally via the &lt;em&gt;type&lt;/em&gt; argument. Instructions to perform additional transformations, like for factors that could be considered as &lt;a href=&quot;https://support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.htm#statug_distance_sect003.htm&quot;&gt;asymmetric binary&lt;/a&gt; (such as rare events), can be seen in &lt;strong&gt;?daisy&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Remove college name before clustering&lt;/span&gt;
+
+gower_dist &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; daisy&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;college_clean&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                    metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gower&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                    type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;logratio &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Check attributes to ensure the correct methods are being used&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# (I = interval, N = nominal)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# Note that despite logratio being called, &lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# the type remains coded as &amp;quot;I&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_dist&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## 301476 dissimilarities, summarized :
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## 0.0018601 0.1034400 0.2358700 0.2314500 0.3271400 0.7773500 
+## Metric :  mixed ;  Types = I, I, I, I, N, N 
+## Number of objects : 777&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As a sanity check, we can print out the most similar and dissimilar pair in the data to see if it makes sense. In this case, University of St. Thomas and John Carroll University are rated to be the most similar given the seven features used in the distance calculation, while University of Science and Arts of Oklahoma and Harvard are rated to be the most dissimilar.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;gower_mat &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;as.matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_dist&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Output most similar pair&lt;/span&gt;
+
+college_clean&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;which&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;gower_mat &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat&lt;span class=&quot;p&quot;&gt;)]),&lt;/span&gt;
+        arr.ind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;##                            name accept_rate Outstate Enroll
+## 682 University of St. Thomas MN   0.8784638    11712    828
+## 284     John Carroll University   0.8711276    11700    820
+##     Grad.Rate Private   isElite
+## 682        89     Yes Not Elite
+## 284        89     Yes Not Elite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Output most dissimilar pair&lt;/span&gt;
+
+college_clean&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;which&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;gower_mat &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_mat&lt;span class=&quot;p&quot;&gt;)]),&lt;/span&gt;
+        arr.ind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;##                                        name accept_rate
+## 673 University of Sci. and Arts of Oklahoma   0.9824561
+## 251                      Harvard University   0.1561486
+##     Outstate Enroll Grad.Rate Private   isElite
+## 673     3687    208        43      No Not Elite
+## 251    18485   1606       100     Yes     Elite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;choosing-a-clustering-algorithm&quot;&gt;Choosing a clustering algorithm&lt;/h2&gt;
+
+&lt;p&gt;Now that the distance matrix has been calculated, it is time to select an algorithm for clustering. While many algorithms that can handle a custom distance matrix exist, partitioning around medoids (PAM) will be used here.&lt;/p&gt;
+
+&lt;p&gt;Partitioning around medoids is an iterative clustering procedure with the following steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Choose k random entities to become the medoids&lt;/li&gt;
+  &lt;li&gt;Assign every entity to its closest medoid (using our custom distance matrix in this case)&lt;/li&gt;
+  &lt;li&gt;For each cluster, identify the observation that would yield the lowest average distance if it were to be re-assigned as the medoid. If so, make this observation the new medoid.&lt;/li&gt;
+  &lt;li&gt;If at least one medoid has changed, return to step 2. Otherwise, end the algorithm.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you know the k-means algorithm, this might look very familiar. In fact, both approaches are identical, except k-means has cluster centers defined by Euclidean distance (i.e., centroids), while cluster centers for PAM are restricted to be the observations themselves (i.e., medoids).&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;pros&lt;/strong&gt;: Easy to understand, more robust to noise and outliers when compared to k-means, and has the added benefit of having an observation serve as the exemplar for each cluster&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;cons&lt;/strong&gt;: Both run time and memory are quadratic (i.e., $O(n^2)$)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;selecting-the-number-of-clusters&quot;&gt;Selecting the number of clusters&lt;/h2&gt;
+
+&lt;p&gt;A variety of metrics exist to help choose the number of clusters to be extracted in a cluster analysis. We will use &lt;a href=&quot;https://en.wikipedia.org/wiki/Silhouette_(clustering)&quot;&gt;silhouette width&lt;/a&gt;, an internal validation metric which is an aggregated measure of how similar an observation is to its own cluster compared its closest neighboring cluster. The metric can range from -1 to 1, where higher values are better. After calculating silhouette width for clusters ranging from 2 to 10 for the PAM algorithm, we see that 3 clusters yields the highest value.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Calculate silhouette width for many k using PAM&lt;/span&gt;
+
+sil_width &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;NA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;i &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  
+  pam_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pam&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_dist&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 diss &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 k &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; i&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
+  sil_width&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pam_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;silinfo&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;avg.width
+  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Plot sihouette width (higher is better)&lt;/span&gt;
+
+plot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; sil_width&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     xlab &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Number of clusters&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     ylab &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Silhouette Width&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+lines&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; sil_width&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/figs/2016-06-22-cluster-mixed-types/unnamed-chunk-5-1.png&quot; alt=&quot;center&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;cluster-interpretation&quot;&gt;Cluster Interpretation&lt;/h2&gt;
+
+&lt;h3 id=&quot;via-descriptive-statistics&quot;&gt;Via Descriptive Statistics&lt;/h3&gt;
+
+&lt;p&gt;After running the algorithm and selecting three clusters, we can interpret the clusters by running &lt;strong&gt;summary&lt;/strong&gt; on each cluster. Based on these results, it seems as though Cluster 1 is mainly Private/Not Elite with medium levels of out of state tuition and smaller levels of enrollment. Cluster 2, on the other hand, is mainly Private/Elite with lower levels of acceptance rates, high levels of out of state tuition, and high graduation rates. Finally, cluster 3 is mainly Public/Not Elite with the lowest levels of tuition, largest levels of enrollment, and lowest graduation rate.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;pam_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pam&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_dist&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; diss &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; k &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+pam_results &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; college_clean &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  dplyr&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;name&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cluster &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; pam_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;clustering&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cluster&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  do&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_summary &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+pam_results&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;the_summary&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## [[1]]
+##   accept_rate        Outstate         Enroll      
+##  Min.   :0.3283   Min.   : 2340   Min.   :  35.0  
+##  1st Qu.:0.7225   1st Qu.: 8842   1st Qu.: 194.8  
+##  Median :0.8004   Median :10905   Median : 308.0  
+##  Mean   :0.7820   Mean   :11200   Mean   : 418.6  
+##  3rd Qu.:0.8581   3rd Qu.:13240   3rd Qu.: 484.8  
+##  Max.   :1.0000   Max.   :21700   Max.   :4615.0  
+##    Grad.Rate      Private        isElite       cluster 
+##  Min.   : 15.00   No :  0   Not Elite:500   Min.   :1  
+##  1st Qu.: 56.00   Yes:500   Elite    :  0   1st Qu.:1  
+##  Median : 67.50                             Median :1  
+##  Mean   : 66.97                             Mean   :1  
+##  3rd Qu.: 78.25                             3rd Qu.:1  
+##  Max.   :118.00                             Max.   :1  
+## 
+## [[2]]
+##   accept_rate        Outstate         Enroll      
+##  Min.   :0.1545   Min.   : 5224   Min.   : 137.0  
+##  1st Qu.:0.4135   1st Qu.:13850   1st Qu.: 391.0  
+##  Median :0.5329   Median :17238   Median : 601.0  
+##  Mean   :0.5392   Mean   :16225   Mean   : 882.5  
+##  3rd Qu.:0.6988   3rd Qu.:18590   3rd Qu.:1191.0  
+##  Max.   :0.9605   Max.   :20100   Max.   :4893.0  
+##    Grad.Rate      Private       isElite      cluster 
+##  Min.   : 54.00   No : 4   Not Elite: 0   Min.   :2  
+##  1st Qu.: 77.00   Yes:65   Elite    :69   1st Qu.:2  
+##  Median : 89.00                           Median :2  
+##  Mean   : 84.78                           Mean   :2  
+##  3rd Qu.: 94.00                           3rd Qu.:2  
+##  Max.   :100.00                           Max.   :2  
+## 
+## [[3]]
+##   accept_rate        Outstate         Enroll    
+##  Min.   :0.3746   Min.   : 2580   Min.   : 153  
+##  1st Qu.:0.6423   1st Qu.: 5295   1st Qu.: 694  
+##  Median :0.7458   Median : 6598   Median :1302  
+##  Mean   :0.7315   Mean   : 6698   Mean   :1615  
+##  3rd Qu.:0.8368   3rd Qu.: 7748   3rd Qu.:2184  
+##  Max.   :1.0000   Max.   :15516   Max.   :6392  
+##    Grad.Rate      Private        isElite       cluster 
+##  Min.   : 10.00   No :208   Not Elite:199   Min.   :3  
+##  1st Qu.: 46.00   Yes:  0   Elite    :  9   1st Qu.:3  
+##  Median : 54.50                             Median :3  
+##  Mean   : 55.42                             Mean   :3  
+##  3rd Qu.: 65.00                             3rd Qu.:3  
+##  Max.   :100.00                             Max.   :3&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Another benefit of the PAM algorithm with respect to interpretation is that the medoids serve as exemplars of each cluster. From this, we see that Saint Francis University is the medoid of the Private/Not Elite cluster, Barnard College is the medoid for the Private/Elite cluster, and Grand Valley State University is the medoid for the Public/Not Elite cluster.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;college_clean&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;pam_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;medoids&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;##                              name accept_rate Outstate
+## 492         Saint Francis College   0.7877629    10880
+## 38                Barnard College   0.5616987    17926
+## 234 Grand Valley State University   0.7525653     6108
+##     Enroll Grad.Rate Private   isElite
+## 492    284        69     Yes Not Elite
+## 38     531        91     Yes     Elite
+## 234   1561        57      No Not Elite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;via-visualization&quot;&gt;Via Visualization&lt;/h3&gt;
+
+&lt;p&gt;One way to visualize many variables in a lower dimensional space is with t-distributed stochastic neighborhood embedding, or &lt;a href=&quot;https://lvdmaaten.github.io/tsne/&quot;&gt;t-SNE&lt;/a&gt;. This method is a dimension reduction technique that tries to preserve local structure so as to make clusters visible in a 2D or 3D visualization. While it typically utilizes Euclidean distance, it has the ability to handle a custom distance metric like the one we created above. In this case, the plot shows the three well-separated clusters that PAM was able to detect. One curious thing to note is that there is a small group that is split between the Private/Elite cluster and the Public/Not Elite cluster.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;tsne_obj &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; Rtsne&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;gower_dist&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; is_distance &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+tsne_data &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; tsne_obj&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Y &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;data.frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  setNames&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;X&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Y&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cluster &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;pam_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;clustering&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+         name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; college_clean&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;name&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Y&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tsne_data&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; cluster&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/figs/2016-06-22-cluster-mixed-types/unnamed-chunk-8-1.png&quot; alt=&quot;center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;By investigating further, it looks like this group is made up of the larger, more competitive public schools, like the University of Virginia or the University of California at Berkeley. While not large enough to warrant an additional cluster according to silhouette width, these 13 schools certainly have characteristics distinct from the other three clusters.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;tsne_data &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;X &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; X &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         Y &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-15&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; Y &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  left_join&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;college_clean&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; by &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  collect &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;##  [1] &amp;quot;College of William and Mary&amp;quot;                
+##  [2] &amp;quot;Georgia Institute of Technology&amp;quot;            
+##  [3] &amp;quot;SUNY at Binghamton&amp;quot;                         
+##  [4] &amp;quot;SUNY College at Geneseo&amp;quot;                    
+##  [5] &amp;quot;Trenton State College&amp;quot;                      
+##  [6] &amp;quot;University of California at Berkeley&amp;quot;       
+##  [7] &amp;quot;University of California at Irvine&amp;quot;         
+##  [8] &amp;quot;University of Florida&amp;quot;                      
+##  [9] &amp;quot;University of Illinois - Urbana&amp;quot;            
+## [10] &amp;quot;University of Michigan at Ann Arbor&amp;quot;        
+## [11] &amp;quot;University of Minnesota at Morris&amp;quot;          
+## [12] &amp;quot;University of North Carolina at Chapel Hill&amp;quot;
+## [13] &amp;quot;University of Virginia&amp;quot;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;a-final-note-dealing-with-larger-samples-and-one-hot-encoding&quot;&gt;A Final Note: Dealing with Larger Samples and One-Hot Encoding&lt;/h2&gt;
+
+&lt;p&gt;Because using a custom distance metric requires keeping an NxN matrix in memory, it starts to become noticeable for larger sample sizes (&amp;gt; 10,000 or so on my machine). For clustering larger samples, I have found two options:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ryerson.ca/~rmichon/mkt700/SPSS/TwoStep%20Cluster%20Analysis.htm&quot;&gt;Two-step clustering in SPSS&lt;/a&gt;: This model-based clustering approach can handle categorical and continuous variables and utilizes silhouette width (using rule-of-thumb cutoffs) to find the optimal number of clusters.&lt;/li&gt;
+  &lt;li&gt;Using Euclidean distance on data that has been one-hot encoded: While much quicker computationally, note that this is not optimal as you run into the curse of dimensionality fairly fast since all categoricals are recoded to become sparse matrices. Note that this approach is actually fairly similar to the dice coefficient found in calculation of Gower distance, except it incorrectly labels 0-0 as a match. More on this can be seen in &lt;a href=&quot;http://stats.stackexchange.com/a/122118/21654&quot;&gt;this&lt;/a&gt; discussion.&lt;/li&gt;
+&lt;/ol&gt;
+
+</description>
+        <pubDate>Wed, 22 Jun 2016 00:00:00 -0400</pubDate>
+        <link>http://dpmartin42.github.io/r/cluster-mixed-types</link>
+        <guid isPermaLink="true">http://dpmartin42.github.io/r/cluster-mixed-types</guid>
+      </item>
+    
+      <item>
         <title>Partial Dependence Plots</title>
         <description>&lt;p&gt;It can be difficult to understand the functional relations between predictors and an outcome when using black box prediction methods like random forests. One way to investigate these relations is with partial dependence plots. These plots are graphical visualizations of the marginal effect of a given variable (or multiple variables) on an outcome. Typically, these are restricted to only one or two variables due to the limits of human perception, and thus may be misleading due to hidden higher-order interactions. Despite this, partial dependence plots can still be extremely useful for knowledge discovery in large data sets, especially when the random forest is dominated by lower-order interactions and main effects.&lt;/p&gt;
 
