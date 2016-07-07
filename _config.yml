@@ -7,7 +7,6 @@ tagline:             'Website and blog of Daniel P. Martin'
 description:         'Quantitative Psychology PhD and Data Scientist at McKinsey & Company.'
 url:                 http://dpmartin42.github.io
 baseurl:             ''
-paginate:            5
 
 # About/contact
 author:
