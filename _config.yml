@@ -1,5 +1,5 @@
 # Permalinks
-permalink:           posts/:categories/:title
+permalink:           blogposts/:categories/:title
 
 # Setup
 title:               Wicked Good Data
