@@ -17,14 +17,13 @@ After some research, I ultimately decided on using the following workflow:
 
 Given that the notion of health was itself dependent upon the assumptions I made with assigning labels, validation of results was key. First, I calculated AUC as a measure of internal validation using 5-fold cross-validation. The image of the ROC curve can be seen below:
 
-![center](/figs/2016-03-01-food-findr/ROC.png)
+<center><img src="/figs/2016-03-01-food-findr/ROC.png"></center>
 
 In addition to internal validation, I also performed external validation in three ways. The first was to look at variable importance and partial dependence plots of the top predictors to ensure they made intuitive sense. They did, with words like turkey, cucumber, and hummus having high predictive power in a positive direction, and words like fried, sauce, and provolone having high predictive power in a negative direction. A variable importance plot of the most important food words can be seen below:
 
+<center><img src="/figs/2016-03-01-food-findr/VarImp.png"></center>
 
-![center](/figs/2016-03-01-food-findr/VarImp.png)
-
-The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen at [food-findr.com](http://food-findr.com). 
+The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen on [my shinyapps dashboard](https://dpmartin42.shinyapps.io/foodfindr/). 
 
 The most difficult part of this project was trying to come up with a way to label restaurants as healthy/not healthy for the purposes of training the model. I actually first tried a simple scoring method by trying to come up with a overall health score for each unique food word based on its nutritional properties for a single serving using a nutrition website API. I also tried an unsupervised approach by clustering the bag of words into distinct groups, which I would then label by hand. Both approaches gave nonsensical results and I ultimately went with the workflow outlined above.
 

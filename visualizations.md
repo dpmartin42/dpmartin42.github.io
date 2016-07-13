@@ -8,7 +8,7 @@ title: Visualizations
 <p>
 
 <center>foodfindr</center>
-<center><a href="http://food-findr.com/"><img style="max-height: 200px; height: auto" src="../images/foodfindr.png" align="middle"></a></center>
+<center><a href="https://dpmartin42.shinyapps.io/foodfindr/"><img style="max-height: 200px; height: auto" src="../images/foodfindr.png" align="middle"></a></center>
 Interactive map of predicted health of Boston restaurants. Built using Python, R, Shiny, and AWS.
 
 <p>
@@ -79,4 +79,3 @@ Visualizes the popularity of baby names over time. Built using R and Shiny.
 </small>
 </div>
 
-</div>
