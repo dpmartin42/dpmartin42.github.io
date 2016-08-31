@@ -13,7 +13,7 @@ educational research. I also participated in the July 2015 Insight Health
 Data Science program in Boston. My interests include statistics, 
 data mining/machine learning, education, and open science. If you look around,
 you will find some blog posts, publications, and relevant code.
-You can also see a copy of my resume [here](../extras/DPM_Resume_07-2015.pdf).
+You can also see a copy of my resume [here](../extras/DPM_Resume.pdf).
 
 ## R Packages
 
