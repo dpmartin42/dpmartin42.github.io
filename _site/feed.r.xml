@@ -7,6 +7,243 @@
 		<atom:link href="http://dpmartin42.github.io/feed.r.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Handling Class Imbalance with R and Caret - An Introduction</title>
+        <description>&lt;p&gt;When faced with classification tasks in the real world, it can be challenging to deal with an outcome where one class heavily outweighs the other (a.k.a., imbalanced classes). The following will be a two-part post on some of the techniques that can help to improve prediction performance in the case of imbalanced classes using R and caret. This first post provides a general overview of how these techniques can be implemented in practice, and the second post highlights some caveats to keep in mind when using these methods.&lt;/p&gt;
+
+&lt;h2 id=&quot;evaluation-metrics-for-classifiers&quot;&gt;Evaluation metrics for classifiers&lt;/h2&gt;
+
+&lt;p&gt;After building a classifier, you need to decide how to tell if it is doing a good job or not. Many evaluation metrics for classifiers exist, and can generally be divided into two main groups:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Threshold-dependent: This includes metrics like accuracy, precision, recall, and F1 score, which all require a confusion matrix to be calculated using a hard cutoff on predicted probabilities. These metrics are typically quite poor in the case of imbalanced classes, as statistical software inappropriately uses a default threshold of 0.50 resulting in the model predicting that all observations belong in the majority class.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Threshold-invariant: This includes metrics like area under the ROC curve (AUC), which quantifies true positive rate as a function of false positive rate for a variety of classification thresholds. Another way to interpret this metric is the probability that a random positive instance will have a higher estimated probability than a random negative instance.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;methods-to-improve-performance-on-imbalanced-data&quot;&gt;Methods to improve performance on imbalanced data&lt;/h2&gt;
+
+&lt;p&gt;A few of the more popular techniques to deal with class imbalance will be covered below, but the following list is nowhere near exhaustive. For brevity, a quick overview is provided. For a more substantial overview, I highly recommend this &lt;a href=&quot;https://svds.com/learning-imbalanced-classes/&quot;&gt;Silicon Valley Data Science blog post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Class weights: impose a heavier cost when errors are made in the minority class&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Down-sampling: randomly remove instances in the majority class&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Up-sampling: randomly replicate instances in the minority class&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Synthetic minority sampling technique (SMOTE): down samples the majority class and synthesizes new minority instances by interpolating between existing ones&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is important to note that these weighting and sampling techniques have the biggest impact on threshold-dependent metrics like accuracy, because they artificially move the threshold to be closer to what might be considered as the “optimal” location on a ROC curve. Threshold-invariant metrics can still be improved using these methods, but the effect will not be as pronounced.&lt;/p&gt;
+
+&lt;h2 id=&quot;simulation-set-up&quot;&gt;Simulation set-up&lt;/h2&gt;
+
+&lt;p&gt;To simulate class imbalance, the &lt;code&gt;twoClassSim&lt;/code&gt; function from caret is used. Here, we simulate a separate training set and test set, each with 5000 observations. Additionally, we include 20 meaningful variables and 10 noise variables. The intercept argument controls the overall level of class imbalance and has been selected to yield a class imbalance of around 50:1.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;dplyr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for data manipulation&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;caret&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for model-building&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;DMwR&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for smote implementation&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;purrr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for functional programming (map)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;pROC&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for AUC calculations&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2969&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+imbal_train &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+imbal_test  &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
+&lt;span class=&quot;kp&quot;&gt;prop.table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## 
+## Class1 Class2 
+## 0.9796 0.0204&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;initial-results&quot;&gt;Initial results&lt;/h2&gt;
+
+&lt;p&gt;To model these data, a gradient boosting machine (gbm) is used as it can easily handle potential interactions and non-linearities that have been simulated above. Model hyperparameters are tuned using repeated cross-validation on the training set, repeating five times with ten folds used in each repeat. The AUC is used to evaluate the classifier to avoid having to make decisions about the classification threshold. Note that this code takes a little while to run due to the repeated cross-validation, so reduce the number of repeats to speed things up and/or use the &lt;code&gt;verboseIter = TRUE&lt;/code&gt; argument in the &lt;code&gt;trainControl&lt;/code&gt; function to keep track of the progress.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Set up control function for training&lt;/span&gt;
+
+ctrl &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; trainControl&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;repeatedcv&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     number &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     repeats &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     summaryFunction &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; twoClassSummary&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     classProbs &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build a standard classifier using a gradient boosted machine&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5627&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+orig_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build custom AUC function to extract AUC&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# from the caret model object&lt;/span&gt;
+
+test_roc &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  
+  roc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      predict&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;prob&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class2&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+orig_fit &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  test_roc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  auc&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Area under the curve: 0.9575&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Overall, the final model yields an AUC of 0.96 which is quite good. Can we improve it using the techniques outlined above?&lt;/p&gt;
+
+&lt;h2 id=&quot;handling-class-imbalance-with-weighted-or-sampling-methods&quot;&gt;Handling class imbalance with weighted or sampling methods&lt;/h2&gt;
+
+&lt;p&gt;Both weighting and sampling methods are easy to employ in caret. Incorporating weights into the model can be handled by using the weights argument in the &lt;code&gt;train&lt;/code&gt; function (assuming the model can handle weights in caret, see the list &lt;a href=&quot;https://topepo.github.io/caret/train-models-by-tag.html#Accepts_Case_Weights&quot;&gt;here&lt;/a&gt;), while the sampling methods mentioned above can be implemented using the sampling argument in the &lt;code&gt;trainControl&lt;/code&gt; function. Note that the same seeds were used for each model to ensure that results from the same cross-validation folds are being used.&lt;/p&gt;
+
+&lt;p&gt;Also keep in mind that for sampling methods, it is vital that you only sample the training set and not the test set as well. This means that when doing cross-validation, the sampling step must be done inside of the cross-validation procedure. Max Kuhn of the caret package gives a good overview of what happens when you don’t take this precaution in &lt;a href=&quot;https://topepo.github.io/caret/subsampling-for-class-imbalances.html&quot;&gt;this caret documentation&lt;/a&gt;. Using the sampling argument in the &lt;code&gt;trainControl&lt;/code&gt; function implements sampling correctly in the cross-validation procedure.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Create model weights (they sum to one)&lt;/span&gt;
+
+model_weights &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;ifelse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class1&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Use the same seed to ensure same cross-validation splits&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;seeds &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; orig_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;control&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;seeds
+
+&lt;span class=&quot;c1&quot;&gt;# Build weighted model&lt;/span&gt;
+
+weighted_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      weights &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model_weights&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build down-sampled model&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;down&amp;quot;&lt;/span&gt;
+
+down_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build up-sampled model&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;up&amp;quot;&lt;/span&gt;
+
+up_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build smote model&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;smote&amp;quot;&lt;/span&gt;
+
+smote_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Examining the AUC calculated on the test set shows a clear distinction between the original model implementation and those that incorporated either a weighting or sampling technique. The weighted method possessed the highest AUC value, followed by the sampling methods, with the original model implementation performing the worst.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Examine results for test set&lt;/span&gt;
+
+model_list &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;original &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; orig_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   weighted &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; weighted_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   down &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; down_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   up &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; up_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   SMOTE &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; smote_fit&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+model_list_roc &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; model_list &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;test_roc&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+model_list_roc &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;auc&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## $original
+## Area under the curve: 0.9575
+## 
+## $weighted
+## Area under the curve: 0.9804
+## 
+## $down
+## Area under the curve: 0.9705
+## 
+## $up
+## Area under the curve: 0.9759
+## 
+## $SMOTE
+## Area under the curve: 0.976&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can examine the actual ROC curve to get a better idea of where the weighted and sampling models are outperforming the original model at a variety of classification thresholds. Here, we see that the weighted model seems to dominate the others throughout, while the original model lags between a false positive rate between 0% and 25%. This indicates that the other models have better early retrieval numbers. That is, the algorithm better identifies the true positives as a function of false positives for instances that are predicted as having a high probability of being in the minority class.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;results_list_roc &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;NA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+num_mod &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_roc &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt; model_list_roc&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  
+  results_list_roc&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;num_mod&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; 
+    &lt;span class=&quot;kt&quot;&gt;data_frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;tpr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; the_roc&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sensitivities&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+               fpr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; the_roc&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;specificities&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+               model &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model_list&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;num_mod&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+  
+  num_mod &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; num_mod &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+results_df_roc &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; bind_rows&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;results_list_roc&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Plot ROC curve for all 5 models&lt;/span&gt;
+
+custom_col &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#000000&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#009E73&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#0072B2&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#D55E00&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#CC79A7&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; fpr&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tpr&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; results_df_roc&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  geom_line&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  scale_color_manual&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; custom_col&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  geom_abline&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; slope &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gray&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  theme_bw&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;base_size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/figs/2016-12-10-imbalanced-classes-part-1/unnamed-chunk-5-1.png&quot; alt=&quot;center&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
+
+&lt;p&gt;In the above post, I outline some steps to help improve classification performance when you have imbalanced classes. Although weighting outperformed the sampling techniques in this simulation, this may not always be the case. Because of this, it is important to compare different techniques to see which works best for your data. I have actually found that in many cases, there is no huge benefit in using either weighting or sampling techniques when classes are moderately imbalanced (i.e., no worse than 10:1) in conjunction with a threshold-invariant metric like the AUC. In the next post, I will go over some caveats to keep in mind when using the AUC in the case of imbalanced classes and how other metrics can be more informative. Stay tuned!&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 10 Dec 2016 00:00:00 -0500</pubDate>
+        <link>http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1</link>
+        <guid isPermaLink="true">http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1</guid>
+      </item>
+    
+      <item>
         <title>Clustering Mixed Data Types in R</title>
         <description>&lt;p&gt;Clustering allows us to better understand how a sample might be comprised of distinct subgroups given a set of variables. While many introductions to cluster analysis typically review a simple application using continuous variables, clustering data of mixed types (e.g., continuous, ordinal, and nominal) is often of interest. The following is an overview of one approach to clustering data of mixed types using Gower distance, partitioning around medoids, and silhouette width.&lt;/p&gt;
 
