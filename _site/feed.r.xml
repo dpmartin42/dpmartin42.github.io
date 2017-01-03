@@ -7,6 +7,251 @@
 		<atom:link href="http://dpmartin42.github.io/feed.r.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Handling Class Imbalance with R and Caret - Caveats when using the AUC</title>
+        <description>&lt;p&gt;In my &lt;a href=&quot;http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1&quot;&gt;last post&lt;/a&gt;, I went over how weighting and sampling methods can help to improve predictive performance in the case of imbalanced classes. I also included an applied example with a simulated dataset that used the area under the ROC curve (AUC) as the evaluation metric. In this post, I will go over some issues to keep in mind when using the AUC in the case of imbalanced classes and highlight another metric that is useful to examine: area under the precision-recall curve (AUPRC).&lt;/p&gt;
+
+&lt;p&gt;To quickly catch up, essential code from the previous post is below:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;dplyr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for data manipulation&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;caret&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for model-building&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;DMwR&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for smote implementation&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;purrr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for functional programming (map)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;pROC&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for AUC calculations&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;PRROC&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# for Precision-Recall curve calculations&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2969&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+imbal_train &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                           
+imbal_test  &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
+&lt;span class=&quot;c1&quot;&gt;# Set up control function for training&lt;/span&gt;
+
+ctrl &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; trainControl&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;repeatedcv&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     number &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     repeats &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     summaryFunction &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; twoClassSummary&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     classProbs &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Build a standard classifier using a gradient boosted machine&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5627&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+orig_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;c1&quot;&gt;# Create model weights (they sum to one)&lt;/span&gt;
+
+model_weights &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;ifelse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class1&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_train&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Use the same seed to ensure same cross-validation splits&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;seeds &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; orig_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;control&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;seeds
+
+weighted_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      weights &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model_weights&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                      trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;down&amp;quot;&lt;/span&gt;
+
+down_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                  trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;up&amp;quot;&lt;/span&gt;
+
+up_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ctrl&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;sampling &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;smote&amp;quot;&lt;/span&gt;
+
+smote_fit &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ROC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Examine results for test set&lt;/span&gt;
+
+model_list &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;original &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; orig_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   weighted &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; weighted_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   down &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; down_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   up &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; up_fit&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                   SMOTE &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; smote_fit&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;issues-with-using-roc-for-imbalanced-classes&quot;&gt;Issues with using ROC for imbalanced classes&lt;/h2&gt;
+
+&lt;p&gt;While using the AUC as an evaluation metric for classifiers on data with imbalanced classes is a popular choice, it can be a misleading one if you are not careful. Take the following example from &lt;a href=&quot;http://pages.cs.wisc.edu/~jdavis/davisgoadrichcamera2.pdf&quot;&gt;Davis and Goadrich (2006)&lt;/a&gt;. Below we see the model performance for two classifiers on an imbalanced dataset, with the ROC curve on the left and the precision-recall curve on the right. In the left example, the AUC for Curve 1 is reported in the paper as 0.813 and the AUC for Curve 2 is 0.875. So blindly choosing the best AUC value will choose Model 2 as the best. However, the precision-recall curve on the right tells a much different story. Here the area under Curve 1 is 0.513 and for Curve 2 it is 0.038. Due to Curve 1 having much better early retrieval compared to Curve 2, we see this massive discrepancy in the precision and recall performance between the two classifiers.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;figs/2017-01-03-imbalanced-classes-part-2/roc_pr_compare.PNG&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Another example of how the ROC curve can be misleading comes from &lt;a href=&quot;http://people.inf.elte.hu/kiss/11dwhdm/roc.pdf&quot;&gt;Fawcett (2005)&lt;/a&gt;. Here, we have two datasets, one that has perfect balance between two classes (1:1) and the other has moderate imbalance (10:1). The column on the left shows the ROC curves of two classifiers for both datasets being identical, with the classifier represented by the dashed line having better early retrieval than the classifier represented by the solid line. Again, the precision-recall curve displayed on the right highlights a large discrepancy in performance between the two classifiers on the two datasets. In the case of balanced classes, both classifiers have consistently good precision and recall performance across all thresholds. On the imbalanced data, however, the classifier with better early retrieval has much better precision for lower values of recall.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.PNG&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For these reasons, &lt;a href=&quot;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432&quot;&gt;Saito and Rehmsmeier (2015)&lt;/a&gt; recommend examining the precision-recall curve as it is more explicitly informative than a ROC curve in the case of imbalanced classes. We can calculate the area under the precision-recall curve for our 5 classifiers using the PRROC package in R to create a custom function, &lt;code&gt;calc_auprc&lt;/code&gt;. Here, we see a similar story to what was found with the AUC metric in the &lt;a href=&quot;http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1&quot;&gt;last blog post&lt;/a&gt;; we have better performance for the weighted model, followed by the sampled models, with the original model coming in last. However, now the difference in performance is much more apparent.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;calc_auprc &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  
+  index_class2 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class2&amp;quot;&lt;/span&gt;
+  index_class1 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class1&amp;quot;&lt;/span&gt;
+  
+  predictions &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; predict&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;prob&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
+  pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Get results for all 5 models&lt;/span&gt;
+
+model_list_pr &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; model_list &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;calc_auprc&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+model_list_pr &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_mod&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; the_mod&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;auc.integral&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## $original
+## [1] 0.5271963
+## 
+## $weighted
+## [1] 0.6463645
+## 
+## $down
+## [1] 0.6293265
+## 
+## $up
+## [1] 0.6459151
+## 
+## $SMOTE
+## [1] 0.6195916&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can dig deeper into these results by actually plotting the precision-recall curves. Below, we see that both up sampling and weighting offer the best precision and recall performance depending on the threshold that is chosen, while the original classifier is essentially the worst performing across all thresholds. For example, the weighted classifier simultaneously has a recall of 75% and a precision of 50%, resulting in an F1 score of 0.6, while the original classifier has a recall of 75% and a precision of 25%, resulting in an F1 score of 0.38. In other words, when both classifiers create their predictions and use a particular threshold to obtain hard classifications, they both correctly identify 75% of the cases that are actually in the minority class. However, the weighted classifier is more efficient in these predictions, in that 50% of the observations predicted to be in the minority class actually are, while for the original classifier, only 25% of the observations predicted to be in the minority class actually are.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Plot the AUPRC curve for all 5 models&lt;/span&gt;
+
+results_list_pr &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;NA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+num_mod &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_pr &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt; model_list_pr&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  
+  results_list_pr&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;num_mod&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;data_frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;recall &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; the_pr&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;curve&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                                           precision &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; the_pr&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;curve&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                                           model &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model_list_pr&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;num_mod&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+  
+  num_mod &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; num_mod &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+results_df_pr &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; bind_rows&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;results_list_pr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+custom_col &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#000000&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#009E73&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#0072B2&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#D55E00&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#CC79A7&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; recall&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; precision&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; results_df_pr&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  geom_line&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; model&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  scale_color_manual&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; custom_col&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  geom_abline&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_test&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class2&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;nrow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imbal_test&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+              slope &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gray&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+  theme_bw&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/figs/2017-01-03-imbalanced-classes-part-2/unnamed-chunk-3-1.png&quot; alt=&quot;center&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;implementing-the-area-under-the-precision-recall-curve-metric-in-caret&quot;&gt;Implementing the area under the precision-recall curve metric in caret&lt;/h2&gt;
+
+&lt;p&gt;One might imagine wanting to choose hyperparameters of a classifier by using the area under the precision-recall curve rather than the AUC, as some combinations of hyperparameters for a given model might have better early retrieval performance compared to others. It is incredibly easy to create a custom summary function in caret to allow you to do this by combining the code for the &lt;code&gt;calc_auprc&lt;/code&gt; function with &lt;a href=&quot;https://topepo.github.io/caret/model-training-and-tuning.html#metrics&quot;&gt;these instructions&lt;/a&gt; found in the caret documentation.&lt;/p&gt;
+
+&lt;p&gt;This custom summary function is implemented below, along with code to re-run the original model now using area under the precision-recall curve as the evaluation metric. Here, we see that the original model implementation has the exact same results on the test set for the area under the PR curve, regardless of whether we build the model using the area under the ROC curve or the area under the precision-recall curve. This is because both select the same combination of hyperparameters to build the final model on. Note that this may not always be the case, especially if you decide to use the &lt;a href=&quot;http://www.stat.cmu.edu/~ryantibs/datamining/lectures/19-val2-marked.pdf&quot;&gt;1-SE&lt;/a&gt; rule when choosing the hyperparameters in order to encourage a more parsimonious solution.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;auprcSummary &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; lev &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; model &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  
+  index_class2 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;obs &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class2&amp;quot;&lt;/span&gt;
+  index_class1 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;obs &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class1&amp;quot;&lt;/span&gt;
+  
+  the_curve &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  out &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; the_curve&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;auc.integral
+  &lt;span class=&quot;kp&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;out&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;AUPRC&amp;quot;&lt;/span&gt;
+  
+  out
+  
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Re-initialize control function to remove smote and&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# include our new summary function&lt;/span&gt;
+
+ctrl &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; trainControl&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;repeatedcv&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     number &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     repeats &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     summaryFunction &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; auprcSummary&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     classProbs &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                     seeds &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; orig_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;control&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;seeds&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+orig_pr &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; train&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Class &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_train&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;gbm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 verbose &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 metric &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;AUPRC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                 trControl &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ctrl&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Get results for auprc on the test set&lt;/span&gt;
+
+orig_fit_test &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; orig_fit &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  calc_auprc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_mod&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; the_mod&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;auc.integral&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+orig_pr_test &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; orig_pr &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  calc_auprc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; imbal_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;the_mod&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; the_mod&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;auc.integral&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# The test errors are the same&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;identical&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;orig_fit_test&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+          orig_pr_test&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Because both chose the same&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# hyperparameter combination&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;identical&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;orig_fit&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;bestTune&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+          orig_pr&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;bestTune&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
+
+&lt;p&gt;The area under the precision-recall curve can be a useful metric to help differentiate between two competing models in the case of imbalanced classes. For the AUC, weights and sampling techniques may only provide modest improvements. However, this improvement typically impacts early retrieval performance, resulting in a much larger gain in the overall precision of a model. In conjunction with trying weighting or sampling, it is also recommended to avoid relying solely on the AUC when evaluating the performance of a classifier that has imbalanced classes as it can be a misleading metric. The code above shows how easy it is to use the precision-recall curve, a more sensitive measure of classification performance when there are imbalanced classes.&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 03 Jan 2017 00:00:00 -0500</pubDate>
+        <link>http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-2</link>
+        <guid isPermaLink="true">http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-2</guid>
+      </item>
+    
+      <item>
         <title>Handling Class Imbalance with R and Caret - An Introduction</title>
         <description>&lt;p&gt;When faced with classification tasks in the real world, it can be challenging to deal with an outcome where one class heavily outweighs the other (a.k.a., imbalanced classes). The following will be a two-part post on some of the techniques that can help to improve prediction performance in the case of imbalanced classes using R and caret. This first post provides a general overview of how these techniques can be implemented in practice, and the second post highlights some caveats to keep in mind when using these methods.&lt;/p&gt;
 
