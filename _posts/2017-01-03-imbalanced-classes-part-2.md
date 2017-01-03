@@ -19,15 +19,8 @@ library(PRROC) # for Precision-Recall curve calculations
 
 set.seed(2969)
 
-imbal_train <- twoClassSim(5000,
-                           intercept = -25,
-                           linearVars = 20,
-                           noiseVars = 10)
-                           
-imbal_test  <- twoClassSim(5000,
-                           intercept = -25,
-                           linearVars = 20,
-                           noiseVars = 10)
+imbal_train <- twoClassSim(5000, intercept = -25, linearVars = 20, noiseVars = 10)
+imbal_test  <- twoClassSim(5000, intercept = -25, linearVars = 20, noiseVars = 10)
   
 # Set up control function for training
 
@@ -108,11 +101,11 @@ model_list <- list(original = orig_fit,
 
 While using the AUC as an evaluation metric for classifiers on data with imbalanced classes is a popular choice, it can be a misleading one if you are not careful. Take the following example from [Davis and Goadrich (2006)](http://pages.cs.wisc.edu/~jdavis/davisgoadrichcamera2.pdf). Below we see the model performance for two classifiers on an imbalanced dataset, with the ROC curve on the left and the precision-recall curve on the right. In the left example, the AUC for Curve 1 is reported in the paper as 0.813 and the AUC for Curve 2 is 0.875. So blindly choosing the best AUC value will choose Model 2 as the best. However, the precision-recall curve on the right tells a much different story. Here the area under Curve 1 is 0.513 and for Curve 2 it is 0.038. Due to Curve 1 having much better early retrieval compared to Curve 2, we see this massive discrepancy in the precision and recall performance between the two classifiers.
 
-![](figs/2017-01-03-imbalanced-classes-part-2/roc_pr_compare.PNG)
+<center><img src="/figs/2017-01-03-imbalanced-classes-part-2/roc_pr_compare.png"></center>
 
 Another example of how the ROC curve can be misleading comes from [Fawcett (2005)](http://people.inf.elte.hu/kiss/11dwhdm/roc.pdf). Here, we have two datasets, one that has perfect balance between two classes (1:1) and the other has moderate imbalance (10:1). The column on the left shows the ROC curves of two classifiers for both datasets being identical, with the classifier represented by the dashed line having better early retrieval than the classifier represented by the solid line. Again, the precision-recall curve displayed on the right highlights a large discrepancy in performance between the two classifiers on the two datasets. In the case of balanced classes, both classifiers have consistently good precision and recall performance across all thresholds. On the imbalanced data, however, the classifier with better early retrieval has much better precision for lower values of recall. 
 
-![](figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.PNG)
+<center><img src="/figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.png"></center>
 
 For these reasons, [Saito and Rehmsmeier (2015)](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432) recommend examining the precision-recall curve as it is more explicitly informative than a ROC curve in the case of imbalanced classes. We can calculate the area under the precision-recall curve for our 5 classifiers using the PRROC package in R to create a custom function, `calc_auprc`. Here, we see a similar story to what was found with the AUC metric in the [last blog post](http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1); we have better performance for the weighted model, followed by the sampled models, with the original model coming in last. However, now the difference in performance is much more apparent.
 

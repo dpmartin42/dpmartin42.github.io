@@ -150,15 +150,8 @@
 
 <span class="kp">set.seed</span><span class="p">(</span><span class="m">2969</span><span class="p">)</span>
 
-imbal_train <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span>
-                           intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span>
-                           linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
-                           noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
-                           
-imbal_test  <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span>
-                           intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span>
-                           linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
-                           noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
+imbal_train <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span> intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span> linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span> noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
+imbal_test  <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span> intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span> linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span> noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
   
 <span class="c1"># Set up control function for training</span>
 
@@ -237,11 +230,11 @@ model_list <span class="o">&lt;-</span> <span class="kt">list</span><span class=
 
 <p>While using the AUC as an evaluation metric for classifiers on data with imbalanced classes is a popular choice, it can be a misleading one if you are not careful. Take the following example from <a href="http://pages.cs.wisc.edu/~jdavis/davisgoadrichcamera2.pdf">Davis and Goadrich (2006)</a>. Below we see the model performance for two classifiers on an imbalanced dataset, with the ROC curve on the left and the precision-recall curve on the right. In the left example, the AUC for Curve 1 is reported in the paper as 0.813 and the AUC for Curve 2 is 0.875. So blindly choosing the best AUC value will choose Model 2 as the best. However, the precision-recall curve on the right tells a much different story. Here the area under Curve 1 is 0.513 and for Curve 2 it is 0.038. Due to Curve 1 having much better early retrieval compared to Curve 2, we see this massive discrepancy in the precision and recall performance between the two classifiers.</p>
 
-<p><img src="figs/2017-01-03-imbalanced-classes-part-2/roc_pr_compare.PNG" alt="" /></p>
+<center><img src="/figs/2017-01-03-imbalanced-classes-part-2/roc_pr_compare.png" /></center>
 
 <p>Another example of how the ROC curve can be misleading comes from <a href="http://people.inf.elte.hu/kiss/11dwhdm/roc.pdf">Fawcett (2005)</a>. Here, we have two datasets, one that has perfect balance between two classes (1:1) and the other has moderate imbalance (10:1). The column on the left shows the ROC curves of two classifiers for both datasets being identical, with the classifier represented by the dashed line having better early retrieval than the classifier represented by the solid line. Again, the precision-recall curve displayed on the right highlights a large discrepancy in performance between the two classifiers on the two datasets. In the case of balanced classes, both classifiers have consistently good precision and recall performance across all thresholds. On the imbalanced data, however, the classifier with better early retrieval has much better precision for lower values of recall.</p>
 
-<p><img src="figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.PNG" alt="" /></p>
+<center><img src="/figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.png" /></center>
 
 <p>For these reasons, <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432">Saito and Rehmsmeier (2015)</a> recommend examining the precision-recall curve as it is more explicitly informative than a ROC curve in the case of imbalanced classes. We can calculate the area under the precision-recall curve for our 5 classifiers using the PRROC package in R to create a custom function, <code>calc_auprc</code>. Here, we see a similar story to what was found with the AUC metric in the <a href="http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1">last blog post</a>; we have better performance for the weighted model, followed by the sampled models, with the original model coming in last. However, now the difference in performance is much more apparent.</p>
 
