@@ -19,8 +19,15 @@ library(PRROC) # for Precision-Recall curve calculations
 
 set.seed(2969)
 
-imbal_train <- twoClassSim(5000, intercept = -25, linearVars = 20, noiseVars = 10)
-imbal_test  <- twoClassSim(5000, intercept = -25, linearVars = 20, noiseVars = 10)
+imbal_train <- twoClassSim(5000,
+                           intercept = -25,
+                           linearVars = 20,
+                           noiseVars = 10)
+
+imbal_test  <- twoClassSim(5000,
+                           intercept = -25,
+                           linearVars = 20,
+                           noiseVars = 10)
   
 # Set up control function for training
 
@@ -119,7 +126,8 @@ calc_auprc <- function(model, data){
   
   predictions <- predict(model, data, type = "prob")
   
-  pr.curve(predictions$Class2[index_class2], predictions$Class2[index_class1], curve = TRUE)
+  pr.curve(predictions$Class2[index_class2],
+           predictions$Class2[index_class1], curve = TRUE)
   
 }
 
@@ -200,7 +208,9 @@ auprcSummary <- function(data, lev = NULL, model = NULL){
   index_class2 <- data$obs == "Class2"
   index_class1 <- data$obs == "Class1"
   
-  the_curve <- pr.curve(data$Class2[index_class2], data$Class2[index_class1], curve = FALSE)
+  the_curve <- pr.curve(data$Class2[index_class2],
+                        data$Class2[index_class1], curve = FALSE)
+  
   out <- the_curve$auc.integral
   names(out) <- "AUPRC"
   
@@ -269,3 +279,4 @@ identical(orig_fit$bestTune,
 The area under the precision-recall curve can be a useful metric to help differentiate between two competing models in the case of imbalanced classes. For the AUC, weights and sampling techniques may only provide modest improvements. However, this improvement typically impacts early retrieval performance, resulting in a much larger gain in the overall precision of a model. In conjunction with trying weighting or sampling, it is also recommended to avoid relying solely on the AUC when evaluating the performance of a classifier that has imbalanced classes as it can be a misleading metric. The code above shows how easy it is to use the precision-recall curve, a more sensitive measure of classification performance when there are imbalanced classes.
 
 
+**edit (1/3/17):** Graciously pointed out to me by Max Kuhn, a recent release of caret allows you to use the `prSummary` function rather than a custom function in `trainControl` to calculate the area under the precision-recall curve. Additionally, the `confusionMatrix` function has a mode argument that will focus on precision and recall (rather than sensitivity and specificity). See [this page](https://topepo.github.io/caret/measuring-performance.html) for more information.  

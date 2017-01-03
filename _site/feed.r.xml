@@ -21,8 +21,15 @@
 
 &lt;span class=&quot;kp&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2969&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-imbal_train &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-imbal_test  &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+imbal_train &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+imbal_test  &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; twoClassSim&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           intercept &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;-25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           linearVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                           noiseVars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   
 &lt;span class=&quot;c1&quot;&gt;# Set up control function for training&lt;/span&gt;
 
@@ -116,7 +123,8 @@ model_list &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class
   
   predictions &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; predict&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;model&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;prob&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   
-  pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+           predictions&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
   
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
@@ -184,7 +192,9 @@ ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&qu
   index_class2 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;obs &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class2&amp;quot;&lt;/span&gt;
   index_class1 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;obs &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Class1&amp;quot;&lt;/span&gt;
   
-  the_curve &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  the_curve &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; pr.curve&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class2&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                        data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Class2&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;index_class1&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; curve &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  
   out &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; the_curve&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;auc.integral
   &lt;span class=&quot;kp&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;out&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;AUPRC&amp;quot;&lt;/span&gt;
   
@@ -238,6 +248,7 @@ orig_pr_test &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; orig_pr &lt;
 
 &lt;p&gt;The area under the precision-recall curve can be a useful metric to help differentiate between two competing models in the case of imbalanced classes. For the AUC, weights and sampling techniques may only provide modest improvements. However, this improvement typically impacts early retrieval performance, resulting in a much larger gain in the overall precision of a model. In conjunction with trying weighting or sampling, it is also recommended to avoid relying solely on the AUC when evaluating the performance of a classifier that has imbalanced classes as it can be a misleading metric. The code above shows how easy it is to use the precision-recall curve, a more sensitive measure of classification performance when there are imbalanced classes.&lt;/p&gt;
 
+&lt;p&gt;&lt;strong&gt;edit (1/3/17):&lt;/strong&gt; Graciously pointed out to me by Max Kuhn, a recent release of caret allows you to use the &lt;code&gt;prSummary&lt;/code&gt; function rather than a custom function in &lt;code&gt;trainControl&lt;/code&gt; to calculate the area under the precision-recall curve. Additionally, the &lt;code&gt;confusionMatrix&lt;/code&gt; function has a mode argument that will focus on precision and recall (rather than sensitivity and specificity). See &lt;a href=&quot;https://topepo.github.io/caret/measuring-performance.html&quot;&gt;this page&lt;/a&gt; for more information.&lt;/p&gt;
 </description>
         <pubDate>Tue, 03 Jan 2017 00:00:00 -0500</pubDate>
         <link>http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-2</link>
