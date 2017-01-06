@@ -127,7 +127,8 @@ calc_auprc <- function(model, data){
   predictions <- predict(model, data, type = "prob")
   
   pr.curve(predictions$Class2[index_class2],
-           predictions$Class2[index_class1], curve = TRUE)
+           predictions$Class2[index_class1],
+           curve = TRUE)
   
 }
 
@@ -172,9 +173,10 @@ num_mod <- 1
 
 for(the_pr in model_list_pr){
   
-  results_list_pr[[num_mod]] <- data_frame(recall = the_pr$curve[, 1],
-                                           precision = the_pr$curve[, 2],
-                                           model = names(model_list_pr)[num_mod])
+  results_list_pr[[num_mod]] <- 
+    data_frame(recall = the_pr$curve[, 1],
+               precision = the_pr$curve[, 2],
+               model = names(model_list_pr)[num_mod])
   
   num_mod <- num_mod + 1
   
@@ -184,10 +186,12 @@ results_df_pr <- bind_rows(results_list_pr)
 
 custom_col <- c("#000000", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
 
-ggplot(aes(x = recall, y = precision, group = model), data = results_df_pr) +
+ggplot(aes(x = recall, y = precision, group = model),
+       data = results_df_pr) +
   geom_line(aes(color = model), size = 1) +
   scale_color_manual(values = custom_col) +
-  geom_abline(intercept = sum(imbal_test$Class == "Class2")/nrow(imbal_test),
+  geom_abline(intercept =
+                sum(imbal_test$Class == "Class2")/nrow(imbal_test),
               slope = 0, color = "gray", size = 1) +
   theme_bw()
 {% endhighlight %}
@@ -209,7 +213,8 @@ auprcSummary <- function(data, lev = NULL, model = NULL){
   index_class1 <- data$obs == "Class1"
   
   the_curve <- pr.curve(data$Class2[index_class2],
-                        data$Class2[index_class1], curve = FALSE)
+                        data$Class2[index_class1],
+                        curve = FALSE)
   
   out <- the_curve$auc.integral
   names(out) <- "AUPRC"
