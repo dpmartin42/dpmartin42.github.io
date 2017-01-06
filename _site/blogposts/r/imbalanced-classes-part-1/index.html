@@ -177,25 +177,25 @@
 
 <p>To simulate class imbalance, the <code>twoClassSim</code> function from caret is used. Here, we simulate a separate training set and test set, each with 5000 observations. Additionally, we include 20 meaningful variables and 10 noise variables. The intercept argument controls the overall level of class imbalance and has been selected to yield a class imbalance of around 50:1.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span> <span class="c1"># for data manipulation</span>
-<span class="kn">library</span><span class="p">(</span>caret<span class="p">)</span> <span class="c1"># for model-building</span>
-<span class="kn">library</span><span class="p">(</span>DMwR<span class="p">)</span> <span class="c1"># for smote implementation</span>
-<span class="kn">library</span><span class="p">(</span>purrr<span class="p">)</span> <span class="c1"># for functional programming (map)</span>
-<span class="kn">library</span><span class="p">(</span>pROC<span class="p">)</span> <span class="c1"># for AUC calculations</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data manipulation
+</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w"> </span><span class="c1"># for model-building
+</span><span class="n">library</span><span class="p">(</span><span class="n">DMwR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for smote implementation
+</span><span class="n">library</span><span class="p">(</span><span class="n">purrr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for functional programming (map)
+</span><span class="n">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for AUC calculations
+</span><span class="w">
+</span><span class="n">set.seed</span><span class="p">(</span><span class="m">2969</span><span class="p">)</span><span class="w">
 
-<span class="kp">set.seed</span><span class="p">(</span><span class="m">2969</span><span class="p">)</span>
+</span><span class="n">imbal_train</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">twoClassSim</span><span class="p">(</span><span class="m">5000</span><span class="p">,</span><span class="w">
+                           </span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-25</span><span class="p">,</span><span class="w">
+                           </span><span class="n">linearVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w">
+                           </span><span class="n">noiseVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
 
-imbal_train <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span>
-                           intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span>
-                           linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
-                           noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
-
-imbal_test  <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><span class="m">5000</span><span class="p">,</span>
-                           intercept <span class="o">=</span> <span class="m">-25</span><span class="p">,</span>
-                           linearVars <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
-                           noiseVars <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
+</span><span class="n">imbal_test</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">twoClassSim</span><span class="p">(</span><span class="m">5000</span><span class="p">,</span><span class="w">
+                           </span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-25</span><span class="p">,</span><span class="w">
+                           </span><span class="n">linearVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w">
+                           </span><span class="n">noiseVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
   
-<span class="kp">prop.table</span><span class="p">(</span><span class="kp">table</span><span class="p">(</span>imbal_train<span class="o">$</span>Class<span class="p">))</span></code></pre></div>
+</span><span class="n">prop.table</span><span class="p">(</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">))</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## 
 ## Class1 Class2 
@@ -205,38 +205,38 @@ imbal_test  <span class="o">&lt;-</span> twoClassSim<span class="p">(</span><spa
 
 <p>To model these data, a gradient boosting machine (gbm) is used as it can easily handle potential interactions and non-linearities that have been simulated above. Model hyperparameters are tuned using repeated cross-validation on the training set, repeating five times with ten folds used in each repeat. The AUC is used to evaluate the classifier to avoid having to make decisions about the classification threshold. Note that this code takes a little while to run due to the repeated cross-validation, so reduce the number of repeats to speed things up and/or use the <code>verboseIter = TRUE</code> argument in the <code>trainControl</code> function to keep track of the progress.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Set up control function for training</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Set up control function for training
+</span><span class="w">
+</span><span class="n">ctrl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">trainControl</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"repeatedcv"</span><span class="p">,</span><span class="w">
+                     </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
+                     </span><span class="n">repeats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w">
+                     </span><span class="n">summaryFunction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">twoClassSummary</span><span class="p">,</span><span class="w">
+                     </span><span class="n">classProbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
-ctrl <span class="o">&lt;-</span> trainControl<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;repeatedcv&quot;</span><span class="p">,</span>
-                     number <span class="o">=</span> <span class="m">10</span><span class="p">,</span>
-                     repeats <span class="o">=</span> <span class="m">5</span><span class="p">,</span>
-                     summaryFunction <span class="o">=</span> twoClassSummary<span class="p">,</span>
-                     classProbs <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</span><span class="c1"># Build a standard classifier using a gradient boosted machine
+</span><span class="w">
+</span><span class="n">set.seed</span><span class="p">(</span><span class="m">5627</span><span class="p">)</span><span class="w">
 
-<span class="c1"># Build a standard classifier using a gradient boosted machine</span>
+</span><span class="n">orig_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
+                  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
+                  </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+                  </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-<span class="kp">set.seed</span><span class="p">(</span><span class="m">5627</span><span class="p">)</span>
-
-orig_fit <span class="o">&lt;-</span> train<span class="p">(</span>Class <span class="o">~</span> <span class="m">.</span><span class="p">,</span>
-                  data <span class="o">=</span> imbal_train<span class="p">,</span>
-                  method <span class="o">=</span> <span class="s">&quot;gbm&quot;</span><span class="p">,</span>
-                  verbose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-                  metric <span class="o">=</span> <span class="s">&quot;ROC&quot;</span><span class="p">,</span>
-                  trControl <span class="o">=</span> ctrl<span class="p">)</span>
-
-<span class="c1"># Build custom AUC function to extract AUC</span>
-<span class="c1"># from the caret model object</span>
-
-test_roc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>model<span class="p">,</span> data<span class="p">)</span> <span class="p">{</span>
+</span><span class="c1"># Build custom AUC function to extract AUC
+# from the caret model object
+</span><span class="w">
+</span><span class="n">test_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   
-  roc<span class="p">(</span>data<span class="o">$</span>Class<span class="p">,</span>
-      predict<span class="p">(</span>model<span class="p">,</span> data<span class="p">,</span> type <span class="o">=</span> <span class="s">&quot;prob&quot;</span><span class="p">)[,</span> <span class="s">&quot;Class2&quot;</span><span class="p">])</span>
+  </span><span class="n">roc</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">Class</span><span class="p">,</span><span class="w">
+      </span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"prob"</span><span class="p">)[,</span><span class="w"> </span><span class="s2">"Class2"</span><span class="p">])</span><span class="w">
 
-<span class="p">}</span>
+</span><span class="p">}</span><span class="w">
 
-orig_fit <span class="o">%&gt;%</span>
-  test_roc<span class="p">(</span>data <span class="o">=</span> imbal_test<span class="p">)</span> <span class="o">%&gt;%</span>
-  auc<span class="p">()</span></code></pre></div>
+</span><span class="n">orig_fit</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">test_roc</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">auc</span><span class="p">()</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## Area under the curve: 0.9575</code></pre></div>
 
@@ -248,74 +248,74 @@ orig_fit <span class="o">%&gt;%</span>
 
 <p>Also keep in mind that for sampling methods, it is vital that you only sample the training set and not the test set as well. This means that when doing cross-validation, the sampling step must be done inside of the cross-validation procedure. Max Kuhn of the caret package gives a good overview of what happens when you don’t take this precaution in <a href="https://topepo.github.io/caret/subsampling-for-class-imbalances.html">this caret documentation</a>. Using the sampling argument in the <code>trainControl</code> function implements sampling correctly in the cross-validation procedure.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Create model weights (they sum to one)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Create model weights (they sum to one)
+</span><span class="w">
+</span><span class="n">model_weights</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class1"</span><span class="p">,</span><span class="w">
+                        </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w">
+                        </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">2</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w">
 
-model_weights <span class="o">&lt;-</span> <span class="kp">ifelse</span><span class="p">(</span>imbal_train<span class="o">$</span>Class <span class="o">==</span> <span class="s">&quot;Class1&quot;</span><span class="p">,</span>
-                        <span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="kp">table</span><span class="p">(</span>imbal_train<span class="o">$</span>Class<span class="p">)[</span><span class="m">1</span><span class="p">])</span> <span class="o">*</span> <span class="m">0.5</span><span class="p">,</span>
-                        <span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="kp">table</span><span class="p">(</span>imbal_train<span class="o">$</span>Class<span class="p">)[</span><span class="m">2</span><span class="p">])</span> <span class="o">*</span> <span class="m">0.5</span><span class="p">)</span>
+</span><span class="c1"># Use the same seed to ensure same cross-validation splits
+</span><span class="w">
+</span><span class="n">ctrl</span><span class="o">$</span><span class="n">seeds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">orig_fit</span><span class="o">$</span><span class="n">control</span><span class="o">$</span><span class="n">seeds</span><span class="w">
 
-<span class="c1"># Use the same seed to ensure same cross-validation splits</span>
+</span><span class="c1"># Build weighted model
+</span><span class="w">
+</span><span class="n">weighted_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
+                      </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
+                      </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
+                      </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+                      </span><span class="n">weights</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_weights</span><span class="p">,</span><span class="w">
+                      </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
+                      </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-ctrl<span class="o">$</span>seeds <span class="o">&lt;-</span> orig_fit<span class="o">$</span>control<span class="o">$</span>seeds
+</span><span class="c1"># Build down-sampled model
+</span><span class="w">
+</span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"down"</span><span class="w">
 
-<span class="c1"># Build weighted model</span>
+</span><span class="n">down_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
+                  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
+                  </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+                  </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-weighted_fit <span class="o">&lt;-</span> train<span class="p">(</span>Class <span class="o">~</span> <span class="m">.</span><span class="p">,</span>
-                      data <span class="o">=</span> imbal_train<span class="p">,</span>
-                      method <span class="o">=</span> <span class="s">&quot;gbm&quot;</span><span class="p">,</span>
-                      verbose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-                      weights <span class="o">=</span> model_weights<span class="p">,</span>
-                      metric <span class="o">=</span> <span class="s">&quot;ROC&quot;</span><span class="p">,</span>
-                      trControl <span class="o">=</span> ctrl<span class="p">)</span>
+</span><span class="c1"># Build up-sampled model
+</span><span class="w">
+</span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"up"</span><span class="w">
 
-<span class="c1"># Build down-sampled model</span>
+</span><span class="n">up_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
+                </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
+                </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
+                </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+                </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
+                </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-ctrl<span class="o">$</span>sampling <span class="o">&lt;-</span> <span class="s">&quot;down&quot;</span>
+</span><span class="c1"># Build smote model
+</span><span class="w">
+</span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"smote"</span><span class="w">
 
-down_fit <span class="o">&lt;-</span> train<span class="p">(</span>Class <span class="o">~</span> <span class="m">.</span><span class="p">,</span>
-                  data <span class="o">=</span> imbal_train<span class="p">,</span>
-                  method <span class="o">=</span> <span class="s">&quot;gbm&quot;</span><span class="p">,</span>
-                  verbose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-                  metric <span class="o">=</span> <span class="s">&quot;ROC&quot;</span><span class="p">,</span>
-                  trControl <span class="o">=</span> ctrl<span class="p">)</span>
-
-<span class="c1"># Build up-sampled model</span>
-
-ctrl<span class="o">$</span>sampling <span class="o">&lt;-</span> <span class="s">&quot;up&quot;</span>
-
-up_fit <span class="o">&lt;-</span> train<span class="p">(</span>Class <span class="o">~</span> <span class="m">.</span><span class="p">,</span>
-                data <span class="o">=</span> imbal_train<span class="p">,</span>
-                method <span class="o">=</span> <span class="s">&quot;gbm&quot;</span><span class="p">,</span>
-                verbose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-                metric <span class="o">=</span> <span class="s">&quot;ROC&quot;</span><span class="p">,</span>
-                trControl <span class="o">=</span> ctrl<span class="p">)</span>
-
-<span class="c1"># Build smote model</span>
-
-ctrl<span class="o">$</span>sampling <span class="o">&lt;-</span> <span class="s">&quot;smote&quot;</span>
-
-smote_fit <span class="o">&lt;-</span> train<span class="p">(</span>Class <span class="o">~</span> <span class="m">.</span><span class="p">,</span>
-                   data <span class="o">=</span> imbal_train<span class="p">,</span>
-                   method <span class="o">=</span> <span class="s">&quot;gbm&quot;</span><span class="p">,</span>
-                   verbose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-                   metric <span class="o">=</span> <span class="s">&quot;ROC&quot;</span><span class="p">,</span>
-                   trControl <span class="o">=</span> ctrl<span class="p">)</span></code></pre></div>
+</span><span class="n">smote_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
+                   </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
+                   </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+                   </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span></code></pre></div>
 
 <p>Examining the AUC calculated on the test set shows a clear distinction between the original model implementation and those that incorporated either a weighting or sampling technique. The weighted method possessed the highest AUC value, followed by the sampling methods, with the original model implementation performing the worst.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Examine results for test set</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Examine results for test set
+</span><span class="w">
+</span><span class="n">model_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig_fit</span><span class="p">,</span><span class="w">
+                   </span><span class="n">weighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weighted_fit</span><span class="p">,</span><span class="w">
+                   </span><span class="n">down</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">down_fit</span><span class="p">,</span><span class="w">
+                   </span><span class="n">up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">up_fit</span><span class="p">,</span><span class="w">
+                   </span><span class="n">SMOTE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smote_fit</span><span class="p">)</span><span class="w">
 
-model_list <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>original <span class="o">=</span> orig_fit<span class="p">,</span>
-                   weighted <span class="o">=</span> weighted_fit<span class="p">,</span>
-                   down <span class="o">=</span> down_fit<span class="p">,</span>
-                   up <span class="o">=</span> up_fit<span class="p">,</span>
-                   SMOTE <span class="o">=</span> smote_fit<span class="p">)</span>
+</span><span class="n">model_list_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">model_list</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">map</span><span class="p">(</span><span class="n">test_roc</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w">
 
-model_list_roc <span class="o">&lt;-</span> model_list <span class="o">%&gt;%</span>
-  map<span class="p">(</span>test_roc<span class="p">,</span> data <span class="o">=</span> imbal_test<span class="p">)</span>
-
-model_list_roc <span class="o">%&gt;%</span>
-  map<span class="p">(</span>auc<span class="p">)</span></code></pre></div>
+</span><span class="n">model_list_roc</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">map</span><span class="p">(</span><span class="n">auc</span><span class="p">)</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## $original
 ## Area under the curve: 0.9575
@@ -334,31 +334,31 @@ model_list_roc <span class="o">%&gt;%</span>
 
 <p>We can examine the actual ROC curve to get a better idea of where the weighted and sampling models are outperforming the original model at a variety of classification thresholds. Here, we see that the weighted model seems to dominate the others throughout, while the original model lags between a false positive rate between 0% and 25%. This indicates that the other models have better early retrieval numbers. That is, the algorithm better identifies the true positives as a function of false positives for instances that are predicted as having a high probability of being in the minority class.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">results_list_roc <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span>
-num_mod <span class="o">&lt;-</span> <span class="m">1</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">results_list_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
+</span><span class="n">num_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
 
-<span class="kr">for</span><span class="p">(</span>the_roc <span class="kr">in</span> model_list_roc<span class="p">){</span>
+</span><span class="k">for</span><span class="p">(</span><span class="n">the_roc</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">model_list_roc</span><span class="p">){</span><span class="w">
   
-  results_list_roc<span class="p">[[</span>num_mod<span class="p">]]</span> <span class="o">&lt;-</span> 
-    <span class="kt">data_frame</span><span class="p">(</span>tpr <span class="o">=</span> the_roc<span class="o">$</span>sensitivities<span class="p">,</span>
-               fpr <span class="o">=</span> <span class="m">1</span> <span class="o">-</span> the_roc<span class="o">$</span>specificities<span class="p">,</span>
-               model <span class="o">=</span> <span class="kp">names</span><span class="p">(</span>model_list<span class="p">)[</span>num_mod<span class="p">])</span>
+  </span><span class="n">results_list_roc</span><span class="p">[[</span><span class="n">num_mod</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
+    </span><span class="n">data_frame</span><span class="p">(</span><span class="n">tpr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">the_roc</span><span class="o">$</span><span class="n">sensitivities</span><span class="p">,</span><span class="w">
+               </span><span class="n">fpr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">the_roc</span><span class="o">$</span><span class="n">specificities</span><span class="p">,</span><span class="w">
+               </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">names</span><span class="p">(</span><span class="n">model_list</span><span class="p">)[</span><span class="n">num_mod</span><span class="p">])</span><span class="w">
   
-  num_mod <span class="o">&lt;-</span> num_mod <span class="o">+</span> <span class="m">1</span>
+  </span><span class="n">num_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">num_mod</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
   
-<span class="p">}</span>
+</span><span class="p">}</span><span class="w">
 
-results_df_roc <span class="o">&lt;-</span> bind_rows<span class="p">(</span>results_list_roc<span class="p">)</span>
+</span><span class="n">results_df_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">bind_rows</span><span class="p">(</span><span class="n">results_list_roc</span><span class="p">)</span><span class="w">
 
-<span class="c1"># Plot ROC curve for all 5 models</span>
+</span><span class="c1"># Plot ROC curve for all 5 models
+</span><span class="w">
+</span><span class="n">custom_col</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"#000000"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#009E73"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#0072B2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#D55E00"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#CC79A7"</span><span class="p">)</span><span class="w">
 
-custom_col <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="s">&quot;#009E73&quot;</span><span class="p">,</span> <span class="s">&quot;#0072B2&quot;</span><span class="p">,</span> <span class="s">&quot;#D55E00&quot;</span><span class="p">,</span> <span class="s">&quot;#CC79A7&quot;</span><span class="p">)</span>
-
-ggplot<span class="p">(</span>aes<span class="p">(</span>x <span class="o">=</span> fpr<span class="p">,</span>  y <span class="o">=</span> tpr<span class="p">,</span> group <span class="o">=</span> model<span class="p">),</span> data <span class="o">=</span> results_df_roc<span class="p">)</span> <span class="o">+</span>
-  geom_line<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> model<span class="p">),</span> size <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-  scale_color_manual<span class="p">(</span>values <span class="o">=</span> custom_col<span class="p">)</span> <span class="o">+</span>
-  geom_abline<span class="p">(</span>intercept <span class="o">=</span> <span class="m">0</span><span class="p">,</span> slope <span class="o">=</span> <span class="m">1</span><span class="p">,</span> color <span class="o">=</span> <span class="s">&quot;gray&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-  theme_bw<span class="p">(</span>base_size <span class="o">=</span> <span class="m">18</span><span class="p">)</span></code></pre></div>
+</span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fpr</span><span class="p">,</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tpr</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">results_df_roc</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">custom_col</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gray"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">)</span></code></pre></div>
 
 <p><img src="/figs/2016-12-10-imbalanced-classes-part-1/unnamed-chunk-5-1.png" alt="center" /></p>
 

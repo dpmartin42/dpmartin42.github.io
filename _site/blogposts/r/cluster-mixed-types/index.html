@@ -167,13 +167,13 @@
 
 <p>The code was run using R version 3.2.2 with the following packages:</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kp">set.seed</span><span class="p">(</span><span class="m">1680</span><span class="p">)</span> <span class="c1"># for reproducibility</span>
-
-<span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span> <span class="c1"># for data cleaning</span>
-<span class="kn">library</span><span class="p">(</span>ISLR<span class="p">)</span> <span class="c1"># for college dataset</span>
-<span class="kn">library</span><span class="p">(</span>cluster<span class="p">)</span> <span class="c1"># for gower similarity and pam</span>
-<span class="kn">library</span><span class="p">(</span>Rtsne<span class="p">)</span> <span class="c1"># for t-SNE plot</span>
-<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span> <span class="c1"># for visualization</span></code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">set.seed</span><span class="p">(</span><span class="m">1680</span><span class="p">)</span><span class="w"> </span><span class="c1"># for reproducibility
+</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data cleaning
+</span><span class="n">library</span><span class="p">(</span><span class="n">ISLR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for college dataset
+</span><span class="n">library</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span><span class="w"> </span><span class="c1"># for gower similarity and pam
+</span><span class="n">library</span><span class="p">(</span><span class="n">Rtsne</span><span class="p">)</span><span class="w"> </span><span class="c1"># for t-SNE plot
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">visualization</span></code></pre></div>
 
 <p>Before clustering can begin, some data cleaning must be done:</p>
 
@@ -182,22 +182,22 @@
   <li>isElite is created by labeling colleges with more than 50% of their new students who were in the top 10% of their high school class as elite</li>
 </ul>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">college_clean <span class="o">&lt;-</span> College <span class="o">%&gt;%</span>
-  mutate<span class="p">(</span>name <span class="o">=</span> <span class="kp">row.names</span><span class="p">(</span><span class="m">.</span><span class="p">),</span>
-         accept_rate <span class="o">=</span> Accept<span class="o">/</span>Apps<span class="p">,</span>
-         isElite <span class="o">=</span> <span class="kp">cut</span><span class="p">(</span>Top10perc<span class="p">,</span>
-                       breaks <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50</span><span class="p">,</span> <span class="m">100</span><span class="p">),</span>
-                       labels <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;Not Elite&quot;</span><span class="p">,</span> <span class="s">&quot;Elite&quot;</span><span class="p">),</span>
-                       include.lowest <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  mutate<span class="p">(</span>isElite <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>isElite<span class="p">))</span> <span class="o">%&gt;%</span>
-  select<span class="p">(</span>name<span class="p">,</span> accept_rate<span class="p">,</span> Outstate<span class="p">,</span> Enroll<span class="p">,</span>
-         Grad.Rate<span class="p">,</span> Private<span class="p">,</span> isElite<span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">college_clean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">College</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row.names</span><span class="p">(</span><span class="n">.</span><span class="p">),</span><span class="w">
+         </span><span class="n">accept_rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Accept</span><span class="o">/</span><span class="n">Apps</span><span class="p">,</span><span class="w">
+         </span><span class="n">isElite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cut</span><span class="p">(</span><span class="n">Top10perc</span><span class="p">,</span><span class="w">
+                       </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span><span class="w">
+                       </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"Not Elite"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Elite"</span><span class="p">),</span><span class="w">
+                       </span><span class="n">include.lowest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">isElite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">isElite</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">select</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">accept_rate</span><span class="p">,</span><span class="w"> </span><span class="n">Outstate</span><span class="p">,</span><span class="w"> </span><span class="n">Enroll</span><span class="p">,</span><span class="w">
+         </span><span class="n">Grad.Rate</span><span class="p">,</span><span class="w"> </span><span class="n">Private</span><span class="p">,</span><span class="w"> </span><span class="n">isElite</span><span class="p">)</span><span class="w">
 
-glimpse<span class="p">(</span>college_clean<span class="p">)</span></code></pre></div>
+</span><span class="n">glimpse</span><span class="p">(</span><span class="n">college_clean</span><span class="p">)</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## Observations: 777
 ## Variables: 7
-## $ name        (chr) &quot;Abilene Christian University&quot;, &quot;Ad...
+## $ name        (chr) "Abilene Christian University", "Ad...
 ## $ accept_rate (dbl) 0.7421687, 0.8801464, 0.7682073, 0....
 ## $ Outstate    (dbl) 7440, 12280, 11250, 12960, 7560, 13...
 ## $ Enroll      (dbl) 721, 512, 336, 137, 55, 158, 103, 4...
@@ -228,18 +228,18 @@ glimpse<span class="p">(</span>college_clean<span class="p">)</span></code></pre
 
 <p>Below, we see that Gower distance can be calculated in one line using the <strong>daisy</strong> function. Note that due to positive skew in the Enroll variable, a log transformation is conducted internally via the <em>type</em> argument. Instructions to perform additional transformations, like for factors that could be considered as <a href="https://support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.htm#statug_distance_sect003.htm">asymmetric binary</a> (such as rare events), can be seen in <strong>?daisy</strong>.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Remove college name before clustering</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Remove college name before clustering
+</span><span class="w">
+</span><span class="n">gower_dist</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">daisy</span><span class="p">(</span><span class="n">college_clean</span><span class="p">[,</span><span class="w"> </span><span class="m">-1</span><span class="p">],</span><span class="w">
+                    </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gower"</span><span class="p">,</span><span class="w">
+                    </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">logratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">))</span><span class="w">
 
-gower_dist <span class="o">&lt;-</span> daisy<span class="p">(</span>college_clean<span class="p">[,</span> <span class="m">-1</span><span class="p">],</span>
-                    metric <span class="o">=</span> <span class="s">&quot;gower&quot;</span><span class="p">,</span>
-                    type <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>logratio <span class="o">=</span> <span class="m">3</span><span class="p">))</span>
-
-<span class="c1"># Check attributes to ensure the correct methods are being used</span>
-<span class="c1"># (I = interval, N = nominal)</span>
-<span class="c1"># Note that despite logratio being called, </span>
-<span class="c1"># the type remains coded as &quot;I&quot;</span>
-
-<span class="kp">summary</span><span class="p">(</span>gower_dist<span class="p">)</span></code></pre></div>
+</span><span class="c1"># Check attributes to ensure the correct methods are being used
+# (I = interval, N = nominal)
+# Note that despite logratio being called, 
+# the type remains coded as "I"
+</span><span class="w">
+</span><span class="n">summary</span><span class="p">(</span><span class="n">gower_dist</span><span class="p">)</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## 301476 dissimilarities, summarized :
 ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
@@ -249,13 +249,13 @@ gower_dist <span class="o">&lt;-</span> daisy<span class="p">(</span>college_cle
 
 <p>As a sanity check, we can print out the most similar and dissimilar pair in the data to see if it makes sense. In this case, University of St. Thomas and John Carroll University are rated to be the most similar given the seven features used in the distance calculation, while University of Science and Arts of Oklahoma and Harvard are rated to be the most dissimilar.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">gower_mat <span class="o">&lt;-</span> <span class="kp">as.matrix</span><span class="p">(</span>gower_dist<span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">gower_mat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.matrix</span><span class="p">(</span><span class="n">gower_dist</span><span class="p">)</span><span class="w">
 
-<span class="c1"># Output most similar pair</span>
-
-college_clean<span class="p">[</span>
-  <span class="kp">which</span><span class="p">(</span>gower_mat <span class="o">==</span> <span class="kp">min</span><span class="p">(</span>gower_mat<span class="p">[</span>gower_mat <span class="o">!=</span> <span class="kp">min</span><span class="p">(</span>gower_mat<span class="p">)]),</span>
-        arr.ind <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)[</span><span class="m">1</span><span class="p">,</span> <span class="p">],</span> <span class="p">]</span></code></pre></div>
+</span><span class="c1"># Output most similar pair
+</span><span class="w">
+</span><span class="n">college_clean</span><span class="p">[</span><span class="w">
+  </span><span class="n">which</span><span class="p">(</span><span class="n">gower_mat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">gower_mat</span><span class="p">[</span><span class="n">gower_mat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">gower_mat</span><span class="p">)]),</span><span class="w">
+        </span><span class="n">arr.ind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">],</span><span class="w"> </span><span class="p">]</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">##                            name accept_rate Outstate Enroll
 ## 682 University of St. Thomas MN   0.8784638    11712    828
@@ -264,11 +264,11 @@ college_clean<span class="p">[</span>
 ## 682        89     Yes Not Elite
 ## 284        89     Yes Not Elite</code></pre></div>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Output most dissimilar pair</span>
-
-college_clean<span class="p">[</span>
-  <span class="kp">which</span><span class="p">(</span>gower_mat <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>gower_mat<span class="p">[</span>gower_mat <span class="o">!=</span> <span class="kp">max</span><span class="p">(</span>gower_mat<span class="p">)]),</span>
-        arr.ind <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)[</span><span class="m">1</span><span class="p">,</span> <span class="p">],</span> <span class="p">]</span></code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Output most dissimilar pair
+</span><span class="w">
+</span><span class="n">college_clean</span><span class="p">[</span><span class="w">
+  </span><span class="n">which</span><span class="p">(</span><span class="n">gower_mat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">gower_mat</span><span class="p">[</span><span class="n">gower_mat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">gower_mat</span><span class="p">)]),</span><span class="w">
+        </span><span class="n">arr.ind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">],</span><span class="w"> </span><span class="p">]</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">##                                        name accept_rate
 ## 673 University of Sci. and Arts of Oklahoma   0.9824561
@@ -301,26 +301,26 @@ college_clean<span class="p">[</span>
 
 <p>A variety of metrics exist to help choose the number of clusters to be extracted in a cluster analysis. We will use <a href="https://en.wikipedia.org/wiki/Silhouette_(clustering)">silhouette width</a>, an internal validation metric which is an aggregated measure of how similar an observation is to its own cluster compared its closest neighboring cluster. The metric can range from -1 to 1, where higher values are better. After calculating silhouette width for clusters ranging from 2 to 10 for the PAM algorithm, we see that 3 clusters yields the highest value.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Calculate silhouette width for many k using PAM</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Calculate silhouette width for many k using PAM
+</span><span class="w">
+</span><span class="n">sil_width</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
 
-sil_width <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span>
-
-<span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">2</span><span class="o">:</span><span class="m">10</span><span class="p">){</span>
+</span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">2</span><span class="o">:</span><span class="m">10</span><span class="p">){</span><span class="w">
   
-  pam_fit <span class="o">&lt;-</span> pam<span class="p">(</span>gower_dist<span class="p">,</span>
-                 diss <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                 k <span class="o">=</span> i<span class="p">)</span>
+  </span><span class="n">pam_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pam</span><span class="p">(</span><span class="n">gower_dist</span><span class="p">,</span><span class="w">
+                 </span><span class="n">diss</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
+                 </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w">
   
-  sil_width<span class="p">[</span>i<span class="p">]</span> <span class="o">&lt;-</span> pam_fit<span class="o">$</span>silinfo<span class="o">$</span>avg.width
+  </span><span class="n">sil_width</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pam_fit</span><span class="o">$</span><span class="n">silinfo</span><span class="o">$</span><span class="n">avg.width</span><span class="w">
   
-<span class="p">}</span>
+</span><span class="p">}</span><span class="w">
 
-<span class="c1"># Plot sihouette width (higher is better)</span>
-
-plot<span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> sil_width<span class="p">,</span>
-     xlab <span class="o">=</span> <span class="s">&quot;Number of clusters&quot;</span><span class="p">,</span>
-     ylab <span class="o">=</span> <span class="s">&quot;Silhouette Width&quot;</span><span class="p">)</span>
-lines<span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> sil_width<span class="p">)</span></code></pre></div>
+</span><span class="c1"># Plot sihouette width (higher is better)
+</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">sil_width</span><span class="p">,</span><span class="w">
+     </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Number of clusters"</span><span class="p">,</span><span class="w">
+     </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Silhouette Width"</span><span class="p">)</span><span class="w">
+</span><span class="n">lines</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">sil_width</span><span class="p">)</span></code></pre></div>
 
 <p><img src="/figs/2016-06-22-cluster-mixed-types/unnamed-chunk-5-1.png" alt="center" /></p>
 
@@ -330,15 +330,15 @@ lines<span class="p">(</span><span class="m">1</span><span class="o">:</span><sp
 
 <p>After running the algorithm and selecting three clusters, we can interpret the clusters by running <strong>summary</strong> on each cluster. Based on these results, it seems as though Cluster 1 is mainly Private/Not Elite with medium levels of out of state tuition and smaller levels of enrollment. Cluster 2, on the other hand, is mainly Private/Elite with lower levels of acceptance rates, high levels of out of state tuition, and high graduation rates. Finally, cluster 3 is mainly Public/Not Elite with the lowest levels of tuition, largest levels of enrollment, and lowest graduation rate.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">pam_fit <span class="o">&lt;-</span> pam<span class="p">(</span>gower_dist<span class="p">,</span> diss <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> k <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">pam_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pam</span><span class="p">(</span><span class="n">gower_dist</span><span class="p">,</span><span class="w"> </span><span class="n">diss</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w">
 
-pam_results <span class="o">&lt;-</span> college_clean <span class="o">%&gt;%</span>
-  dplyr<span class="o">::</span>select<span class="p">(</span><span class="o">-</span>name<span class="p">)</span> <span class="o">%&gt;%</span>
-  mutate<span class="p">(</span>cluster <span class="o">=</span> pam_fit<span class="o">$</span>clustering<span class="p">)</span> <span class="o">%&gt;%</span>
-  group_by<span class="p">(</span>cluster<span class="p">)</span> <span class="o">%&gt;%</span>
-  do<span class="p">(</span>the_summary <span class="o">=</span> <span class="kp">summary</span><span class="p">(</span><span class="m">.</span><span class="p">))</span>
+</span><span class="n">pam_results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">college_clean</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">select</span><span class="p">(</span><span class="o">-</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_fit</span><span class="o">$</span><span class="n">clustering</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">group_by</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">do</span><span class="p">(</span><span class="n">the_summary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">summary</span><span class="p">(</span><span class="n">.</span><span class="p">))</span><span class="w">
 
-pam_results<span class="o">$</span>the_summary</code></pre></div>
+</span><span class="n">pam_results</span><span class="o">$</span><span class="n">the_summary</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">## [[1]]
 ##   accept_rate        Outstate         Enroll      
@@ -390,7 +390,7 @@ pam_results<span class="o">$</span>the_summary</code></pre></div>
 
 <p>Another benefit of the PAM algorithm with respect to interpretation is that the medoids serve as exemplars of each cluster. From this, we see that Saint Francis University is the medoid of the Private/Not Elite cluster, Barnard College is the medoid for the Private/Elite cluster, and Grand Valley State University is the medoid for the Public/Not Elite cluster.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">college_clean<span class="p">[</span>pam_fit<span class="o">$</span>medoids<span class="p">,</span> <span class="p">]</span></code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">college_clean</span><span class="p">[</span><span class="n">pam_fit</span><span class="o">$</span><span class="n">medoids</span><span class="p">,</span><span class="w"> </span><span class="p">]</span></code></pre></div>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">##                              name accept_rate Outstate
 ## 492         Saint Francis College   0.7877629    10880
@@ -405,41 +405,41 @@ pam_results<span class="o">$</span>the_summary</code></pre></div>
 
 <p>One way to visualize many variables in a lower dimensional space is with t-distributed stochastic neighborhood embedding, or <a href="https://lvdmaaten.github.io/tsne/">t-SNE</a>. This method is a dimension reduction technique that tries to preserve local structure so as to make clusters visible in a 2D or 3D visualization. While it typically utilizes Euclidean distance, it has the ability to handle a custom distance metric like the one we created above. In this case, the plot shows the three well-separated clusters that PAM was able to detect. One curious thing to note is that there is a small group that is split between the Private/Elite cluster and the Public/Not Elite cluster.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">tsne_obj <span class="o">&lt;-</span> Rtsne<span class="p">(</span>gower_dist<span class="p">,</span> is_distance <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">tsne_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Rtsne</span><span class="p">(</span><span class="n">gower_dist</span><span class="p">,</span><span class="w"> </span><span class="n">is_distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
-tsne_data <span class="o">&lt;-</span> tsne_obj<span class="o">$</span>Y <span class="o">%&gt;%</span>
-  <span class="kt">data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  setNames<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;Y&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  mutate<span class="p">(</span>cluster <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>pam_fit<span class="o">$</span>clustering<span class="p">),</span>
-         name <span class="o">=</span> college_clean<span class="o">$</span>name<span class="p">)</span>
+</span><span class="n">tsne_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tsne_obj</span><span class="o">$</span><span class="n">Y</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">data.frame</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">setNames</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s2">"X"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Y"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="n">pam_fit</span><span class="o">$</span><span class="n">clustering</span><span class="p">),</span><span class="w">
+         </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">college_clean</span><span class="o">$</span><span class="n">name</span><span class="p">)</span><span class="w">
 
-ggplot<span class="p">(</span>aes<span class="p">(</span>x <span class="o">=</span> X<span class="p">,</span> y <span class="o">=</span> Y<span class="p">),</span> data <span class="o">=</span> tsne_data<span class="p">)</span> <span class="o">+</span>
-  geom_point<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> cluster<span class="p">))</span></code></pre></div>
+</span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Y</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tsne_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_point</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster</span><span class="p">))</span></code></pre></div>
 
 <p><img src="/figs/2016-06-22-cluster-mixed-types/unnamed-chunk-8-1.png" alt="center" /></p>
 
 <p>By investigating further, it looks like this group is made up of the larger, more competitive public schools, like the University of Virginia or the University of California at Berkeley. While not large enough to warrant an additional cluster according to silhouette width, these 13 schools certainly have characteristics distinct from the other three clusters.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">tsne_data <span class="o">%&gt;%</span>
-  filter<span class="p">(</span>X <span class="o">&gt;</span> <span class="m">15</span> <span class="o">&amp;</span> X <span class="o">&lt;</span> <span class="m">25</span><span class="p">,</span>
-         Y <span class="o">&gt;</span> <span class="m">-15</span> <span class="o">&amp;</span> Y <span class="o">&lt;</span> <span class="m">-10</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  left_join<span class="p">(</span>college_clean<span class="p">,</span> by <span class="o">=</span> <span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  collect <span class="o">%&gt;%</span>
-  <span class="m">.</span><span class="p">[[</span><span class="s">&quot;name&quot;</span><span class="p">]]</span></code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">tsne_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">X</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">25</span><span class="p">,</span><span class="w">
+         </span><span class="n">Y</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">-15</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">-10</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">left_join</span><span class="p">(</span><span class="n">college_clean</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"name"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">collect</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">.</span><span class="p">[[</span><span class="s2">"name"</span><span class="p">]]</span></code></pre></div>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">##  [1] &quot;College of William and Mary&quot;                
-##  [2] &quot;Georgia Institute of Technology&quot;            
-##  [3] &quot;SUNY at Binghamton&quot;                         
-##  [4] &quot;SUNY College at Geneseo&quot;                    
-##  [5] &quot;Trenton State College&quot;                      
-##  [6] &quot;University of California at Berkeley&quot;       
-##  [7] &quot;University of California at Irvine&quot;         
-##  [8] &quot;University of Florida&quot;                      
-##  [9] &quot;University of Illinois - Urbana&quot;            
-## [10] &quot;University of Michigan at Ann Arbor&quot;        
-## [11] &quot;University of Minnesota at Morris&quot;          
-## [12] &quot;University of North Carolina at Chapel Hill&quot;
-## [13] &quot;University of Virginia&quot;</code></pre></div>
+<div class="highlight"><pre><code class="language-text" data-lang="text">##  [1] "College of William and Mary"                
+##  [2] "Georgia Institute of Technology"            
+##  [3] "SUNY at Binghamton"                         
+##  [4] "SUNY College at Geneseo"                    
+##  [5] "Trenton State College"                      
+##  [6] "University of California at Berkeley"       
+##  [7] "University of California at Irvine"         
+##  [8] "University of Florida"                      
+##  [9] "University of Illinois - Urbana"            
+## [10] "University of Michigan at Ann Arbor"        
+## [11] "University of Minnesota at Morris"          
+## [12] "University of North Carolina at Chapel Hill"
+## [13] "University of Virginia"</code></pre></div>
 
 <h2 id="a-final-note-dealing-with-larger-samples-and-one-hot-encoding">A Final Note: Dealing with Larger Samples and One-Hot Encoding</h2>
 

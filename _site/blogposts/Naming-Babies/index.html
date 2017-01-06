@@ -145,22 +145,22 @@
 
 <p>You can see the snippet of code that performs this action below:</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r">output<span class="o">$</span>plot <span class="o">&lt;-</span> renderPlot<span class="p">({</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">output</span><span class="o">$</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">renderPlot</span><span class="p">({</span><span class="w">
   
-  p <span class="o">&lt;-</span> plotNames<span class="p">(</span>input<span class="o">$</span>name<span class="p">,</span>
-                 input<span class="o">$</span>sex<span class="p">,</span>
-                 <span class="kp">format</span><span class="p">(</span>input<span class="o">$</span>yearRange<span class="p">[</span><span class="m">1</span><span class="p">],</span> <span class="s">&quot;%Y&quot;</span><span class="p">),</span>
-                 <span class="kp">format</span><span class="p">(</span>input<span class="o">$</span>yearRange<span class="p">[</span><span class="m">2</span><span class="p">],</span> <span class="s">&quot;%Y&quot;</span><span class="p">))</span>
+  </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">plotNames</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">name</span><span class="p">,</span><span class="w">
+                 </span><span class="n">input</span><span class="o">$</span><span class="n">sex</span><span class="p">,</span><span class="w">
+                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">),</span><span class="w">
+                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">))</span><span class="w">
   
-  validate<span class="p">(</span>
-    need<span class="p">(</span>p <span class="o">!=</span> <span class="s">&quot;empty&quot;</span><span class="p">,</span>
-         <span class="s">&quot;I&#39;m sorry, no names that you entered appear in this dataset.</span>
-<span class="s">         This means that all of them appear less than five times per</span>
-<span class="s">         year for whatever sex you indicated.&quot;</span><span class="p">))</span>
+  </span><span class="n">validate</span><span class="p">(</span><span class="w">
+    </span><span class="n">need</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s2">"empty"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"I'm sorry, no names that you entered appear in this dataset.
+         This means that all of them appear less than five times per
+         year for whatever sex you indicated."</span><span class="p">))</span><span class="w">
       
-      p
+      </span><span class="n">p</span><span class="w">
       
-    <span class="p">})</span></code></pre></div>
+    </span><span class="p">})</span></code></pre></div>
 
 <p>When I get some more time, I’m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
 
