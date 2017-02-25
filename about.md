@@ -3,7 +3,7 @@ layout: page
 title: About Me
 ---
 
-I am currently a data scientist with Organizational Solutions at McKinsey & Company.
+I am currently a Senior Data Scientist with Organizational Solutions at McKinsey & Company.
 In August 2015 I received my Ph.D from the Quantitative Psychology program at the
 [University of Virginia](http://www.virginia.edu/), where I worked with
 [Brian Nosek](http://projectimplicit.net/nosek/),
@@ -41,7 +41,7 @@ partitioning.](../extras/dissertation.pdf)
 Open Science Collaboration. (2015). [Estimating the reproducibility of psychological
 science.](https://osf.io/phtye/) *Science, 349, 943*
 
-Ebersole, C. R. et al. (in press). [Many Labs 3: Evaluating participant pool quality
+Ebersole, C. R. et al. (2016). [Many Labs 3: Evaluating participant pool quality
 across the academic semester via replication.](https://osf.io/csygd/) *Journal of Experimental Social
 Psychology.*
 

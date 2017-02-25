@@ -4,7 +4,7 @@ permalink:           blogposts/:categories/:title
 # Setup
 title:               Wicked Good Data
 tagline:             'Website and blog of Daniel P. Martin'
-description:         'Quantitative Psychology PhD and Data Scientist at McKinsey & Company.'
+description:         'Quantitative Psychology PhD and Senior Data Scientist at McKinsey & Company.'
 url:                 http://dpmartin42.github.io
 baseurl:             ''
 highlighter:         rouge
