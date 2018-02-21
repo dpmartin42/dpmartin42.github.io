@@ -5,7 +5,7 @@ title: Foodfindr - Your guide to local, healthy dining in Boston
 
 To help with the transition from academia to data science, I participated in the inaugural session of the [Insight Health Data Science](http://insighthealthdata.com/) program in Boston, MA back in July 2015. As part of the program, the first four weeks are spent creating a data science project that typically comes in the form of an interactive web application on a (health-related) topic of your choosing. After going through a few ideas in my head, I decided to focus on a project that would give me some NLP/webscraping experience, and (arguably more importantly) get me acquainted with the massive number of restaurants in the Greater Boston area. 
 
-Given that the focus of Insight was on health, I wanted to come up with a way to try and identify which restaurants in town are healthier then others purely based on the text found in the menu. Now, this isn't a trivial problem as restaurants rarely release information regarding the caloric content or relative portion sizes of their dishes. Additionally, many restaurants publish their menus on their website in a non-standard pdf format.
+Given that the focus of Insight was on health, I wanted to come up with a way to try and identify which restaurants in town are healthier than others purely based on the text found in the menu. Now, this isn't a trivial problem as restaurants rarely release information regarding the caloric content or relative portion sizes of their dishes. Additionally, many restaurants publish their menus on their website in a non-standard pdf format.
 
 After some research, I ultimately decided on using the following workflow:
 
@@ -17,11 +17,15 @@ After some research, I ultimately decided on using the following workflow:
 
 Given that the notion of health was itself dependent upon the assumptions I made with assigning labels, validation of results was key. First, I calculated AUC as a measure of internal validation using 5-fold cross-validation. The image of the ROC curve can be seen below:
 
-<center><img src="/figs/2016-03-01-food-findr/ROC.png"></center>
+<p align="center">
+![](figs/2016-03-01-food-findr/ROC.png "Logo Title Text 1")
+</p>
 
 In addition to internal validation, I also performed external validation in three ways. The first was to look at variable importance and partial dependence plots of the top predictors to ensure they made intuitive sense. They did, with words like turkey, cucumber, and hummus having high predictive power in a positive direction, and words like fried, sauce, and provolone having high predictive power in a negative direction. A variable importance plot of the most important food words can be seen below:
 
-<center><img src="/figs/2016-03-01-food-findr/VarImp.png"></center>
+<p align="center">
+![](figs/2016-03-01-food-findr/VarImp.png "Logo Title Text 1")
+</p>
 
 The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen on [my shinyapps dashboard](https://dpmartin42.shinyapps.io/foodfindr/). 
 
