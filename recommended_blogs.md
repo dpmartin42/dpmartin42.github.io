@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Blog Roll
+title: Recommended Blogs
 ---
 
 * [Data Colada](http://datacolada.org/)
@@ -10,3 +10,5 @@ title: Blog Roll
 * [Simply Statistics](http://simplystatistics.org/)
 
 * [Statistical Modeling, Causal Inference, and Social Science](http://andrewgelman.com/)
+
+* [Variance Explained](http://varianceexplained.org/)
