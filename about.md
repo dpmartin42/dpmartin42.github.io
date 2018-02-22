@@ -3,29 +3,35 @@ layout: page
 title: About Me
 ---
 
-I am currently a Senior Data Scientist with Organizational Solutions at McKinsey & Company.
-In August 2015 I received my Ph.D from the Quantitative Psychology program at the
-[University of Virginia](http://www.virginia.edu/), where I worked with
+I am currently the lead data scientist for the client-facing people analytics team at
+McKinsey & Company, where I help clients use data to improve decision-making around talent
+related questions. Before this, I received my Ph.D in 2015 from the Quantitative Psychology 
+program at the [University of Virginia](http://www.virginia.edu/), where I worked with
 [Brian Nosek](http://projectimplicit.net/nosek/),
 [Sara Rimm-Kaufman](http://curry.virginia.edu/about/directory/sara-e.-rimm-kaufman), and
 Timo von Oertzen on projects focusing on quantitative challenges found in applied 
 educational research. I also participated in the July 2015 Insight Health
-Data Science program in Boston. My interests include statistics, 
-data mining/machine learning, education, and open science. If you look around,
+Data Science program in Boston. My interests include statistics, machine learning, 
+education, and open science. If you look around,
 you will find some blog posts, publications, and relevant code.
 You can also see a copy of my resume [here](../extras/DPM_Resume.pdf).
 
 ## R Packages
-
-[mleda](https://github.com/dpmartin42/mleda): Contains exploratory 
-plotting and model validation functions to assist applied educational researchers in the analysis 
-of two-level multilevel models.
 
 [IAT](https://github.com/dpmartin42/IAT): Contains a dplyr implementation
 of the D-Score algorithm for the Implicit Association Test, as well as plotting functions
 to visualize the raw data from these tests.
 
 ## Papers
+
+Silberzahn R., Uhlmann E. L., Martin D. P., ..., & Nosek, B. A. (in press). [Many analysts, 
+one dataset: Making transparent how variations in analytical choices 
+affect results.](https://osf.io/j5v8f/) *Advances in Methods and Practices in Psychological 
+Science*.
+
+Ebersole, C. R. et al. (2016). [Many Labs 3: Evaluating participant pool quality
+across the academic semester via replication.](https://osf.io/csygd/) *Journal of Experimental Social
+Psychology, 67, 68 - 82.*
 
 **\*Martin, D. P.** & von Oertzen, T. (2015). [Growth mixture models outperform simpler
 clustering algorithms when detecting longitudinal heterogeneity, even with small sample
@@ -40,10 +46,6 @@ partitioning.](../extras/dissertation.pdf)
 
 Open Science Collaboration. (2015). [Estimating the reproducibility of psychological
 science.](https://osf.io/phtye/) *Science, 349, 943*
-
-Ebersole, C. R. et al. (2016). [Many Labs 3: Evaluating participant pool quality
-across the academic semester via replication.](https://osf.io/csygd/) *Journal of Experimental Social
-Psychology.*
 
 
 <small>

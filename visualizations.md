@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Visualizations
+title: Data Science Apps
 ---
 
 <div style="width:50%">
