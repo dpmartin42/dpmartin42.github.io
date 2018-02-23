@@ -15,7 +15,7 @@ Interactive map of predicted health of Boston restaurants. Built using Python, R
 
 <div align="right">
 <small>
-<a href="/posts/food-findr/">Blog Post</a>
+<a href="/posts/food-findr">Blog Post</a>
 </small>
 </div>
 
@@ -30,7 +30,7 @@ Creates a list of colleges that best matches user criteria. Built using R and Sh
 
 <div align="right">
 <small>
-<a href="/posts/school-selectR/">Blog Post</a>
+<a href="/posts/school-selectR">Blog Post</a>
 </small>
 </div>
 
@@ -45,7 +45,7 @@ Visualizes Implicit Association Test data over 10 years. Built using R and D3.js
 
 <div align="right">
 <small>
-<a href="/posts/visualizing-PI-data/">Blog Post</a>
+<a href="/posts/visualizing-PI-data">Blog Post</a>
 </small>
 </div>
 
@@ -60,7 +60,7 @@ Visualizes character connections in the Harry Potter Universe. Built using R and
 
 <div align="right">
 <small>
-<a href="/posts/wizard-network/">Blog Post</a>
+<a href="/posts/wizard-network">Blog Post</a>
 </small>
 </div>
 
@@ -75,7 +75,7 @@ Visualizes the popularity of baby names over time. Built using R and Shiny.
 
 <div align="right">
 <small>
-<a href="/posts/Naming-Babies/">Blog Post</a>
+<a href="/posts/Naming-Babies">Blog Post</a>
 </small>
 </div>
 
