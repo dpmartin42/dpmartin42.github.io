@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -195,7 +110,7 @@
 
 <p>For this example, I’m simulating 100 participants with 6 timepoints each. The intercept is 10, while the slope is -2. The intercept and slope will also be positively correlated. This indicates that participants who start higher (i.e., a higher intercept) tend to have more positive change, compared to those who start lower (i.e., a lower intercept).</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">require</span><span class="p">(</span><span class="n">MASS</span><span class="p">)</span><span class="w"> 
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">require</span><span class="p">(</span><span class="n">MASS</span><span class="p">)</span><span class="w"> 
 </span><span class="n">require</span><span class="p">(</span><span class="n">lme4</span><span class="p">)</span><span class="w">
 </span><span class="n">require</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 
@@ -221,24 +136,24 @@
 
 </span><span class="n">myData</span><span class="o">$</span><span class="n">Score</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">score</span><span class="w">
 
-</span><span class="n">head</span><span class="p">(</span><span class="n">myData</span><span class="p">)</span></code></pre></div>
+</span><span class="n">head</span><span class="p">(</span><span class="n">myData</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">##     ID Time     Score
+<figure class="highlight"><pre><code class="language-text" data-lang="text">##     ID Time     Score
 ## 1    1    0   5.91669
 ## 101  1    1   3.75189
 ## 201  1    2   0.08993
 ## 301  1    3  -3.52136
 ## 401  1    4 -11.45727
-## 501  1    5 -15.73077</code></pre></div>
+## 501  1    5 -15.73077</code></pre></figure>
 
 <h3 id="step-2-plot-the-data">Step 2: Plot the data</h3>
 
 <p>You can see that I simulated the dataset to be in long format. I also started Time at 0, so the intercept would be interpreted as the mean of the first measure. Using spaghetti plots, we can visualize what the simulated data look like.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Time</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Score</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myData</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Time</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Score</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myData</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gray"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lm"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"red"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></div>
+  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/figs/2014-07-29-Piecewise-growth/unnamed-chunk-1.png" alt="center" /></p>
 
@@ -250,12 +165,12 @@
 
 <p>In this output, we are first presented with random effects. This tells us that the intercept has a variance of around 4 and the slope for Time has a variance of around 2. Again, this is similar to what we simulated. Next are the fixed effects, and we capture the original parameters quite accurately.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">linearModel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lmer</span><span class="p">(</span><span class="n">Score</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">linearModel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lmer</span><span class="p">(</span><span class="n">Score</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w">
                     </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myData</span><span class="p">)</span><span class="w">
 
-</span><span class="n">summary</span><span class="p">(</span><span class="n">linearModel</span><span class="p">)</span></code></pre></div>
+</span><span class="n">summary</span><span class="p">(</span><span class="n">linearModel</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## Linear mixed model fit by REML ['lmerMod']
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## Linear mixed model fit by REML ['lmerMod']
 ## Formula: Score ~ 1 + Time + (1 + Time | ID)
 ##    Data: myData
 ## 
@@ -279,7 +194,7 @@
 ## 
 ## Correlation of Fixed Effects:
 ##      (Intr)
-## Time 0.398</code></pre></div>
+## Time 0.398</code></pre></figure>
 
 <h2 id="piecewise-linear-growth">Piecewise linear growth</h2>
 
@@ -289,7 +204,7 @@
 
 <p>In this case, I’m still simulating 100 participants with 6 timepoints. However, this time I will assume no growth for the first 3 time points, followed by a decline in the next 3 time points. The intercept will still be 10, and the slope for the second piece will still be -2. To make things a little easier, no correlation between intercept and either slope will be simulated.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">intSlopeNew</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mvrnorm</span><span class="p">(</span><span class="n">nPart</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">-2</span><span class="p">),</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">intSlopeNew</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mvrnorm</span><span class="p">(</span><span class="n">nPart</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">-2</span><span class="p">),</span><span class="w">
                        </span><span class="n">Sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="n">byrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">))</span><span class="w">
 
 </span><span class="n">myDataNew</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">ID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">nPart</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">),</span><span class="w">
@@ -309,9 +224,9 @@
 
 </span><span class="n">myDataNew</span><span class="o">$</span><span class="n">Score</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">score</span><span class="w">
 
-</span><span class="n">head</span><span class="p">(</span><span class="n">myDataNew</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span><span class="p">)</span></code></pre></div>
+</span><span class="n">head</span><span class="p">(</span><span class="n">myDataNew</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">##    ID Time Time1 Time2  Score
+<figure class="highlight"><pre><code class="language-text" data-lang="text">##    ID Time Time1 Time2  Score
 ## 1   1    0    -2     0  6.077
 ## 2   1    1    -1     0  8.049
 ## 3   1    2     0     0 10.843
@@ -323,16 +238,16 @@
 ## 9   2    2     0     0 12.577
 ## 10  2    3     0     1 10.015
 ## 11  2    4     0     2  6.023
-## 12  2    5     0     3  5.082</code></pre></div>
+## 12  2    5     0     3  5.082</code></pre></figure>
 
 <h3 id="step-2-plot-the-data-1">Step 2: Plot the data</h3>
 
 <p>This time, I have two time variables: Time1 and Time2. As you can imagine, Time1 represents the first growth pattern, while Time2 represents the second. The intercept is the score when both time variables are 0, which is the third datapoint for each person.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Time</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Score</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myDataNew</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Time</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Score</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myDataNew</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gray"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"red"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></div>
+  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/figs/2014-07-29-Piecewise-growth/unnamed-chunk-3.png" alt="center" /></p>
 
@@ -340,12 +255,12 @@
 
 <p>Model building for this model seems like it should be complex, but it really is just as simple as including the second time variable as both a fixed and random effect. From the output, we see the variance components for each random effect. These are interpreted the same: they tell us how variable our sample is with regard to each component. The fixed-effects are about 10 for our intercept, around 0 for the first slope, and -2 for the second slope. Just as was simulated, this model tells us the data seem to be relatively stable throughout the baseline, then declining after baseline. Including additional predictors/interactions with time follow logically from the above example.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plgModel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lmer</span><span class="p">(</span><span class="n">Score</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plgModel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lmer</span><span class="p">(</span><span class="n">Score</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ID</span><span class="p">),</span><span class="w">
                  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myDataNew</span><span class="p">)</span><span class="w">
 
-</span><span class="n">summary</span><span class="p">(</span><span class="n">plgModel</span><span class="p">)</span></code></pre></div>
+</span><span class="n">summary</span><span class="p">(</span><span class="n">plgModel</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## Linear mixed model fit by REML ['lmerMod']
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## Linear mixed model fit by REML ['lmerMod']
 ## Formula: Score ~ 1 + Time1 + Time2 + (1 + Time1 + Time2 | ID)
 ##    Data: myDataNew
 ## 
@@ -372,7 +287,7 @@
 ## Correlation of Fixed Effects:
 ##       (Intr) Time1 
 ## Time1  0.115       
-## Time2 -0.005  0.042</code></pre></div>
+## Time2 -0.005  0.042</code></pre></figure>
 
 
 </div>

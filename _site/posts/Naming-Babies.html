@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title>
-    School SelectR | Wicked Good Data
+    R, Shiny, and Naming Babies | Wicked Good Data
   </title>
 
   <!-- CSS -->
@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -183,22 +98,37 @@
 
       <div class="container content">
         <div class="post">
-  <h2 class="post-title">School SelectR</h2>
-  <span class="post-date">April 16, 2015</span>
-  <p>To get more experience with recommendation engines, I decided to try and create one using publicly available data from the National Center of Education statistics on college institutional characteristics. The end product is a <a href="http://en.wikipedia.org/wiki/Recommender_system#Content-based_filtering">content-based recommendation engine</a> designed to take user input and output a table listing 4-year private and public colleges that best match this input. The recommendations are based on the <a href="https://stat.ethz.ch/R-manual/R-patched/library/cluster/html/daisy.html">Gower dissimilarity index</a>, which can take variables of multiple types and also allows unique variable weights. The final result is an index on a scale from 0 to 1, where 1 represents a perfect match.</p>
+  <h2 class="post-title">R, Shiny, and Naming Babies</h2>
+  <span class="post-date">August 24, 2014</span>
+  <p>As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful error messages to inform the user when something is not going according to plan.</p>
 
-<p>Data were taken from the publicly available <a href="http://nces.ed.gov/ipeds/datacenter/">IPEDS</a>, from the National Center for Education Statistics. Only a small subset of variables were used in the matching process for simplicity, and are the following:</p>
+<p>In the case of visualizing baby naming trends, a major component of interactivity is the ability of the user to search specific names and genders. Because the babynames data is not entirely exhaustive (only names with greater than 5 instances in a given year are included), I had an empty graph pop up for my trend plot and an error message render for my table of frequency counts.</p>
 
-<ul>
-  <li>geographic region</li>
-  <li>size</li>
-  <li>sector (i.e., public or private)</li>
-  <li>total price for out-of-state students living off campus (not with family)</li>
-  <li>percent admitted - total</li>
-  <li>Graduation rate total cohort	after 6 years</li>
-</ul>
+<p>Luckily, with the newer versions of shiny (later than 0.9.1.9008), custom messages to the user can be created with the validation function if a givent conditional is satisfied. In my example, I had a plotting function that returned the string “empty” if the name did not exist in the dataset and a plot if it did. Then, all I needed to do was add a validate function in the server.R file uses the need function with two arguments: the conditional, and the message to be displayed when the conditional is false (NOT true).</p>
 
-<p>This application was built using R and Shiny, and can be seen <a href="https://dpmartin42.shinyapps.io/college-choice-app/">here</a>. The defaults were set according to my preferences back in the day when I was thinking about what colleges to apply to. All the schools I applied to are actually shown in the top 10 with my alma mater coming in at number 8, which is a nice little validation check with respect to the matching algorithm. As always, the relevant code and data for this application can be seen on <a href="https://github.com/dpmartin42/school-selectR">GitHub</a>.</p>
+<p>You can see the snippet of code that performs this action below:</p>
+
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">output</span><span class="o">$</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">renderPlot</span><span class="p">({</span><span class="w">
+  
+  </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">plotNames</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">name</span><span class="p">,</span><span class="w">
+                 </span><span class="n">input</span><span class="o">$</span><span class="n">sex</span><span class="p">,</span><span class="w">
+                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">),</span><span class="w">
+                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">))</span><span class="w">
+  
+  </span><span class="n">validate</span><span class="p">(</span><span class="w">
+    </span><span class="n">need</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s2">"empty"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"I'm sorry, no names that you entered appear in this dataset.
+         This means that all of them appear less than five times per
+         year for whatever sex you indicated."</span><span class="p">))</span><span class="w">
+      
+      </span><span class="n">p</span><span class="w">
+      
+    </span><span class="p">})</span></code></pre></figure>
+
+<p>When I get some more time, I’m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
+
+<p>For more information regarding the validation function, refer to <a href="http://shiny.rstudio.com/articles/validation.html">this</a> great tutorial created by the RStudio team.</p>
+
 
 </div>
 

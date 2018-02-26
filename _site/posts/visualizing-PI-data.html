@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title>
-    The Wizarding Network of Harry Potter | Wicked Good Data
+    Visualizing Implicit Racial Bias | Wicked Good Data
   </title>
 
   <!-- CSS -->
@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -183,22 +98,19 @@
 
       <div class="container content">
         <div class="post">
-  <h2 class="post-title">The Wizarding Network of Harry Potter</h2>
-  <span class="post-date">November 05, 2014</span>
-  <p>I spent part of my summer as an intern at the <a href="http://centerforopenscience.org/">Center for Open Science</a>. I wanted to become more familiar with JavaScript (I never used it before the internship), so I carved out my own project to create a better network visualization of users on the <a href="https://osf.io/">Open Science Framework</a>. This way, researchers could see who is working with whom, and on what projects.</p>
+  <h2 class="post-title">Visualizing Implicit Racial Bias</h2>
+  <span class="post-date">March 14, 2015</span>
+  <p>For this project, I was looking to get more experience with D3.js and choropleths (I just find them to be fun visualization tools). Luckily, Project Implicit recently uploaded data from a few million participants they have been collecting over the past 10 years on a variety of different Implicit Association Tests (IATs), some of which have state and county information of those taking the test.</p>
 
-<p>While that code is still being integrated into the CoS infrastructure, I wanted to write a post applying/extending my code to other datasets. After some thought, I figured creating a network of Harry Potter character connections would be pretty neat. While I found <a href="https://github.com/efekarakus/potter-network/tree/master/data" target="_blank">this</a>, unfortunately I was looking for a dataset that contained more than 65 characters. Looks like a job for web scraping!</p>
+<p>For those of you who don’t know, the IAT <a href="https://implicit.harvard.edu/implicit/iatdetails.html">(as defined on the project implicit website)</a> is a measure of “the strength of associations between concepts (e.g., black people, gay people) and evaluations (e.g., good, bad) or stereotypes (e.g., athletic, clumsy).” In the case of the racial bias IAT, for example, participants are asked to sort words and pictures into stereotype congruent pairings (i.e., white and good; black and bad) or stereotype incongruent pairings (white and bad; black and good). The main idea is that sorting is much easier for the congruent pairing condition when compared to the incongruent pairing condition. Thus, taking the difference in reaction times for these two conditions for a given participant can create a measure of implicit bias. Note that this explanation is a simplification of the actual pre-processing algorithm used, known as the D-score.</p>
 
-<p>First, I scraped a list of 178 characters taken from <a href="http://en.wikipedia.org/wiki/List_of_Harry_Potter_characters" target="_blank">wikipedia</a>. These characters also have their own pages on a <a href="http://harrypotter.wikia.com/wiki/Main_Page" target="_blank">Harry Potter wiki site</a>, and the majority of these names were identical to what needed to be added to the URL to access the page. A quick code check revealed only a few mistakes to be corrected, but luckily not much manual labor was required in this step.</p>
+<p>Anyway, <a href="https://implicit.harvard.edu/implicit/takeatest.html">Project Implicit</a> is a website where individuals can take many different IATs to measure various implicit thoughts and biases. I highly recommend checking it out to see what taking an IAT is like and contributing to the project. For this visualization, I will be using the racial bias IAT, which by far has the most participants in the available data sets (and are available for download on their Open Science Framework <a href="https://osf.io/52qxl/">project page</a>.</p>
 
-<p>Next, I made the assumption that on a given character’s page, any name that was hyperlinked in the main text share some “logical connection” relevant in the Harry Potter universe. Of course, this assumption may not be completely tenable, but the results this came up with seemed reasonable. Thus, each character page was scraped for an image to use on a custom slider I created, as well as a list of connections to the other characters on my list.</p>
+<p>After creating an R script to download the files off the web and clean them, I went ahead and created the visualization. Note that I required a sample size of at least 100 for each state for the state-level visualization, and at least 30 for each county for the county-level visualization. I also restricted the sample to those who reported living in a U.S. state (i.e., no armed forces or U.S. territories), reported their race as white, and also reported their state and county information. This left a sample size of 1,206,827. Not too shabby!</p>
 
-<p>And that was it! All data scraping and cleaning took place in R, with the network layout being calculated using <a href="http://igraph.org/r/" target="_blank">igraph</a>. The actual network was visualized using the <a href="http://sigmajs.org/" target="_blank">sigma.js</a> JavaScript library, while the navigation tools and custom slider was created in plain ol’ HTML/JavaScript.</p>
+<p>You can see the visualization for state-level IAT scores from 2004 - 2013 <a href="/projects/IAT_Map/state_map.html">here</a>. You can also find the county-level plot as well, but it has a much more limiting sample size. Additionally, see below for a gif of how the choropleth changes across years. Not much of a conclusion can be made given the smaller sample size and the fact that samples are changing within each year, but it was fun putting together nonetheless. As always, the code and data for these visualizations can be found on <a href="https://github.com/dpmartin42/iat-map">GitHub</a>.</p>
 
-<p>Both Hadley Wickham’s new R web scraping tool <a href="https://github.com/hadley/rvest" target="_blank">rvest</a> and the awesome <a href="http://selectorgadget.com/" target="_blank">SelectorGadget</a> actually made this web scraping task much easier than I thought it would be. Note that rvest is not yet available on CRAN, but you can get the development version off his GitHub using devtools. One of my next posts will outline how to use rvest in more detail.</p>
-
-<p>Check out the finished product <a href="../../projects/Harry_Potter/Harry_Potter_Network.html">here</a>, and check out my <a href="https://github.com/dpmartin42/Networks">GitHub</a> if you want to see the web scraping or JavaScript code. I also included two more networks with simple datasets in case anyone is interested in messing around with <a href="http://sigmajs.org/" target="_blank">sigma.js</a>.</p>
-
+<p><img src="/projects/IAT_Map/figure/IAT_state.gif" alt="IAT gif" /></p>
 
 </div>
 

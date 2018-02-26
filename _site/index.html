@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -201,13 +116,13 @@
 
 <p>To quickly catch up, essential code from the previous post is below:</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data manipulation
-</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w"> </span><span class="c1"># for model-building
-</span><span class="n">library</span><span class="p">(</span><span class="n">DMwR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for smote implementation
-</span><span class="n">library</span><span class="p">(</span><span class="n">purrr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for functional programming (map)
-</span><span class="n">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for AUC calculations
-</span><span class="n">library</span><span class="p">(</span><span class="n">PRROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for Precision-Recall curve calculations
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data manipulation</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w"> </span><span class="c1"># for model-building</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">DMwR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for smote implementation</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">purrr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for functional programming (map)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for AUC calculations</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">PRROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for Precision-Recall curve calculations</span><span class="w">
+
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">2969</span><span class="p">)</span><span class="w">
 
 </span><span class="n">imbal_train</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">twoClassSim</span><span class="p">(</span><span class="m">5000</span><span class="p">,</span><span class="w">
@@ -220,16 +135,16 @@
                            </span><span class="n">linearVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w">
                            </span><span class="n">noiseVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
   
-</span><span class="c1"># Set up control function for training
-</span><span class="w">
+</span><span class="c1"># Set up control function for training</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">trainControl</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"repeatedcv"</span><span class="p">,</span><span class="w">
                      </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
                      </span><span class="n">repeats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w">
                      </span><span class="n">summaryFunction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">twoClassSummary</span><span class="p">,</span><span class="w">
                      </span><span class="n">classProbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build a standard classifier using a gradient boosted machine
-</span><span class="w">
+</span><span class="c1"># Build a standard classifier using a gradient boosted machine</span><span class="w">
+
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">5627</span><span class="p">)</span><span class="w">
 
 </span><span class="n">orig_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -240,14 +155,14 @@
                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
 
-</span><span class="c1"># Create model weights (they sum to one)
-</span><span class="w">
+</span><span class="c1"># Create model weights (they sum to one)</span><span class="w">
+
 </span><span class="n">model_weights</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class1"</span><span class="p">,</span><span class="w">
                         </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w">
                         </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">2</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Use the same seed to ensure same cross-validation splits
-</span><span class="w">
+</span><span class="c1"># Use the same seed to ensure same cross-validation splits</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="o">$</span><span class="n">seeds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">orig_fit</span><span class="o">$</span><span class="n">control</span><span class="o">$</span><span class="n">seeds</span><span class="w">
 
 </span><span class="n">weighted_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -285,13 +200,13 @@
                    </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
                    </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Examine results for test set
-</span><span class="w">
+</span><span class="c1"># Examine results for test set</span><span class="w">
+
 </span><span class="n">model_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig_fit</span><span class="p">,</span><span class="w">
                    </span><span class="n">weighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weighted_fit</span><span class="p">,</span><span class="w">
                    </span><span class="n">down</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">down_fit</span><span class="p">,</span><span class="w">
                    </span><span class="n">up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">up_fit</span><span class="p">,</span><span class="w">
-                   </span><span class="n">SMOTE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smote_fit</span><span class="p">)</span></code></pre></div>
+                   </span><span class="n">SMOTE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smote_fit</span><span class="p">)</span></code></pre></figure>
 
 <h2 id="issues-with-using-roc-for-imbalanced-classes">Issues with using ROC for imbalanced classes</h2>
 
@@ -303,9 +218,9 @@
 
 <center><img src="/figs/2017-01-03-imbalanced-classes-part-2/roc_pr_balance_imbalance.png" /></center>
 
-<p>For these reasons, <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432">Saito and Rehmsmeier (2015)</a> recommend examining the precision-recall curve as it is more explicitly informative than a ROC curve in the case of imbalanced classes. We can calculate the area under the precision-recall curve for our 5 classifiers using the PRROC package in R to create a custom function, <code>calc_auprc</code>. Here, we see a similar story to what was found with the AUC metric in the <a href="http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1">last blog post</a>; we have better performance for the weighted model, followed by the sampled models, with the original model coming in last. However, now the difference in performance is much more apparent.</p>
+<p>For these reasons, <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432">Saito and Rehmsmeier (2015)</a> recommend examining the precision-recall curve as it is more explicitly informative than a ROC curve in the case of imbalanced classes. We can calculate the area under the precision-recall curve for our 5 classifiers using the PRROC package in R to create a custom function, <code class="highlighter-rouge">calc_auprc</code>. Here, we see a similar story to what was found with the AUC metric in the <a href="http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1">last blog post</a>; we have better performance for the weighted model, followed by the sampled models, with the original model coming in last. However, now the difference in performance is much more apparent.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">calc_auprc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">calc_auprc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
   
   </span><span class="n">index_class2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class2"</span><span class="w">
   </span><span class="n">index_class1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class1"</span><span class="w">
@@ -318,15 +233,15 @@
   
 </span><span class="p">}</span><span class="w">
 
-</span><span class="c1"># Get results for all 5 models
-</span><span class="w">
+</span><span class="c1"># Get results for all 5 models</span><span class="w">
+
 </span><span class="n">model_list_pr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">model_list</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">map</span><span class="p">(</span><span class="n">calc_auprc</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w">
 
 </span><span class="n">model_list_pr</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">map</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">the_mod</span><span class="p">)</span><span class="w"> </span><span class="n">the_mod</span><span class="o">$</span><span class="n">auc.integral</span><span class="p">)</span></code></pre></div>
+  </span><span class="n">map</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">the_mod</span><span class="p">)</span><span class="w"> </span><span class="n">the_mod</span><span class="o">$</span><span class="n">auc.integral</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## $original
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## $original
 ## [1] 0.5271963
 ## 
 ## $weighted
@@ -339,12 +254,12 @@
 ## [1] 0.6459151
 ## 
 ## $SMOTE
-## [1] 0.6195916</code></pre></div>
+## [1] 0.6195916</code></pre></figure>
 
 <p>We can dig deeper into these results by actually plotting the precision-recall curves. Below, we see that both up sampling and weighting offer the best precision and recall performance depending on the threshold that is chosen, while the original classifier is essentially the worst performing across all thresholds. For example, the weighted classifier simultaneously has a recall of 75% and a precision of 50%, resulting in an F1 score of 0.6, while the original classifier has a recall of 75% and a precision of 25%, resulting in an F1 score of 0.38. In other words, when both classifiers create their predictions and use a particular threshold to obtain hard classifications, they both correctly identify 75% of the cases that are actually in the minority class. However, the weighted classifier is more efficient in these predictions, in that 50% of the observations predicted to be in the minority class actually are, while for the original classifier, only 25% of the observations predicted to be in the minority class actually are.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Plot the AUPRC curve for all 5 models
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Plot the AUPRC curve for all 5 models</span><span class="w">
+
 </span><span class="n">results_list_pr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
 </span><span class="n">num_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
 
@@ -370,17 +285,17 @@
   </span><span class="n">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w">
                 </span><span class="nf">sum</span><span class="p">(</span><span class="n">imbal_test</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class2"</span><span class="p">)</span><span class="o">/</span><span class="n">nrow</span><span class="p">(</span><span class="n">imbal_test</span><span class="p">),</span><span class="w">
               </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gray"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></div>
+  </span><span class="n">theme_bw</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/figs/2017-01-03-imbalanced-classes-part-2/unnamed-chunk-3-1.png" alt="center" /></p>
 
 <h2 id="implementing-the-area-under-the-precision-recall-curve-metric-in-caret">Implementing the area under the precision-recall curve metric in caret</h2>
 
-<p>One might imagine wanting to choose hyperparameters of a classifier by using the area under the precision-recall curve rather than the AUC, as some combinations of hyperparameters for a given model might have better early retrieval performance compared to others. It is incredibly easy to create a custom summary function in caret to allow you to do this by combining the code for the <code>calc_auprc</code> function with <a href="https://topepo.github.io/caret/model-training-and-tuning.html#metrics">these instructions</a> found in the caret documentation.</p>
+<p>One might imagine wanting to choose hyperparameters of a classifier by using the area under the precision-recall curve rather than the AUC, as some combinations of hyperparameters for a given model might have better early retrieval performance compared to others. It is incredibly easy to create a custom summary function in caret to allow you to do this by combining the code for the <code class="highlighter-rouge">calc_auprc</code> function with <a href="https://topepo.github.io/caret/model-training-and-tuning.html#metrics">these instructions</a> found in the caret documentation.</p>
 
 <p>This custom summary function is implemented below, along with code to re-run the original model now using area under the precision-recall curve as the evaluation metric. Here, we see that the original model implementation has the exact same results on the test set for the area under the PR curve, regardless of whether we build the model using the area under the ROC curve or the area under the precision-recall curve. This is because both select the same combination of hyperparameters to build the final model on. Note that this may not always be the case, especially if you decide to use the <a href="http://www.stat.cmu.edu/~ryantibs/datamining/lectures/19-val2-marked.pdf">1-SE</a> rule when choosing the hyperparameters in order to encourage a more parsimonious solution.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">auprcSummary</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">lev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">){</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">auprcSummary</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">lev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">){</span><span class="w">
   
   </span><span class="n">index_class2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">obs</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class2"</span><span class="w">
   </span><span class="n">index_class1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">obs</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class1"</span><span class="w">
@@ -396,9 +311,9 @@
   
 </span><span class="p">}</span><span class="w">
 
-</span><span class="c1"># Re-initialize control function to remove smote and
-# include our new summary function
-</span><span class="w">
+</span><span class="c1"># Re-initialize control function to remove smote and</span><span class="w">
+</span><span class="c1"># include our new summary function</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">trainControl</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"repeatedcv"</span><span class="p">,</span><span class="w">
                      </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
                      </span><span class="n">repeats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w">
@@ -413,8 +328,8 @@
                  </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"AUPRC"</span><span class="p">,</span><span class="w">
                  </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Get results for auprc on the test set
-</span><span class="w">
+</span><span class="c1"># Get results for auprc on the test set</span><span class="w">
+
 </span><span class="n">orig_fit_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">orig_fit</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">calc_auprc</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">the_mod</span><span class="p">)</span><span class="w"> </span><span class="n">the_mod</span><span class="o">$</span><span class="n">auc.integral</span><span class="p">)</span><span class="w">
@@ -423,26 +338,26 @@
   </span><span class="n">calc_auprc</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">the_mod</span><span class="p">)</span><span class="w"> </span><span class="n">the_mod</span><span class="o">$</span><span class="n">auc.integral</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># The test errors are the same
-</span><span class="w">
+</span><span class="c1"># The test errors are the same</span><span class="w">
+
 </span><span class="n">identical</span><span class="p">(</span><span class="n">orig_fit_test</span><span class="p">,</span><span class="w">
-          </span><span class="n">orig_pr_test</span><span class="p">)</span></code></pre></div>
+          </span><span class="n">orig_pr_test</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## [1] TRUE</code></pre></div>
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] TRUE</code></pre></figure>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Because both chose the same
-# hyperparameter combination
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Because both chose the same</span><span class="w">
+</span><span class="c1"># hyperparameter combination</span><span class="w">
+
 </span><span class="n">identical</span><span class="p">(</span><span class="n">orig_fit</span><span class="o">$</span><span class="n">bestTune</span><span class="p">,</span><span class="w">
-          </span><span class="n">orig_pr</span><span class="o">$</span><span class="n">bestTune</span><span class="p">)</span></code></pre></div>
+          </span><span class="n">orig_pr</span><span class="o">$</span><span class="n">bestTune</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## [1] TRUE</code></pre></div>
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] TRUE</code></pre></figure>
 
 <h2 id="final-thoughts">Final thoughts</h2>
 
 <p>The area under the precision-recall curve can be a useful metric to help differentiate between two competing models in the case of imbalanced classes. For the AUC, weights and sampling techniques may only provide modest improvements. However, this improvement typically impacts early retrieval performance, resulting in a much larger gain in the overall precision of a model. In conjunction with trying weighting or sampling, it is also recommended to avoid relying solely on the AUC when evaluating the performance of a classifier that has imbalanced classes as it can be a misleading metric. The code above shows how easy it is to use the precision-recall curve, a more sensitive measure of classification performance when there are imbalanced classes.</p>
 
-<p><strong>edit (1/3/17):</strong> Graciously pointed out to me by Max Kuhn, a recent release of caret allows you to use the <code>prSummary</code> function rather than a custom function in <code>trainControl</code> to calculate the area under the precision-recall curve. Additionally, the <code>confusionMatrix</code> function has a mode argument that will focus on precision and recall (rather than sensitivity and specificity). See <a href="https://topepo.github.io/caret/measuring-performance.html">this page</a> for more information.</p>
+<p><strong>edit (1/3/17):</strong> Graciously pointed out to me by Max Kuhn, a recent release of caret allows you to use the <code class="highlighter-rouge">prSummary</code> function rather than a custom function in <code class="highlighter-rouge">trainControl</code> to calculate the area under the precision-recall curve. Additionally, the <code class="highlighter-rouge">confusionMatrix</code> function has a mode argument that will focus on precision and recall (rather than sensitivity and specificity). See <a href="https://topepo.github.io/caret/measuring-performance.html">this page</a> for more information.</p>
 
   
   <hr>

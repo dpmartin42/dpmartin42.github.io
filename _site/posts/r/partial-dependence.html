@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -203,18 +118,18 @@
 
 <p>Still, I wrote up a simple script, seen below, to get two-dimensional partial dependence plots. In this example, I’m using the College data set found in the ISLR package, which examines the relation between graduation rates and various statistics for US Colleges (N = 777) from the 1995 issue of US News and World Report. It contains 17 variables that can be used as predictors for graduation rate, such as whether a university is private or public, the acceptance rate, and the out-of-state tuition cost. For this example, I’m using the two variables that had the highest variable importance values: out-of-state tuition and percentage of alumni donating. Note that I am just treating the entire data set as the training set for simplicity.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">ISLR</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">ISLR</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">randomForest</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># set seed for reproducibility
+</span><span class="c1"># set seed for reproducibility</span><span class="w">
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w">
 
 </span><span class="n">data</span><span class="p">(</span><span class="n">College</span><span class="p">)</span><span class="w">
 
 </span><span class="n">rf</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">randomForest</span><span class="p">(</span><span class="n">Grad.Rate</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">College</span><span class="p">)</span><span class="w">
-</span><span class="c1"># varImpPlot(rf)
-</span><span class="w">
+</span><span class="c1"># varImpPlot(rf)</span><span class="w">
+
 </span><span class="n">var1_vals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">College</span><span class="o">$</span><span class="n">Outstate</span><span class="p">),</span><span class="w">
                  </span><span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">College</span><span class="o">$</span><span class="n">Outstate</span><span class="p">),</span><span class="w">
                  </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">College</span><span class="o">$</span><span class="n">Outstate</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> 
@@ -225,7 +140,7 @@
                  </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">College</span><span class="o">$</span><span class="n">perc.alumni</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> 
                          </span><span class="nf">min</span><span class="p">(</span><span class="n">College</span><span class="o">$</span><span class="n">perc.alumni</span><span class="p">))</span><span class="o">/</span><span class="m">19</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Create a 20x20 grid
+</span><span class="c1"># Create a 20x20 grid</span><span class="w">
 </span><span class="n">two_vals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">expand.grid</span><span class="p">(</span><span class="n">var1_vals</span><span class="p">,</span><span class="w"> </span><span class="n">var2_vals</span><span class="p">)</span><span class="w">
 </span><span class="n">two_vals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">arrange</span><span class="p">(</span><span class="n">two_vals</span><span class="p">,</span><span class="w"> </span><span class="n">Var1</span><span class="p">,</span><span class="w"> </span><span class="n">Var2</span><span class="p">)</span><span class="w">
 
@@ -242,30 +157,30 @@
 
 </span><span class="n">z</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="n">two_agg</span><span class="o">$</span><span class="n">mean_pred</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">var1_vals</span><span class="p">),</span><span class="w"> </span><span class="n">byrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Set color range (using grayscale)
+</span><span class="c1"># Set color range (using grayscale)</span><span class="w">
 </span><span class="n">jet.colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">colorRampPalette</span><span class="p">(</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"#ffffff"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#2a2a2a"</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> 
 
-</span><span class="c1"># Generate the desired number of colors from this palette
+</span><span class="c1"># Generate the desired number of colors from this palette</span><span class="w">
 </span><span class="n">nbcol</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">100</span><span class="w">
 </span><span class="n">color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">jet.colors</span><span class="p">(</span><span class="n">nbcol</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Compute the z-value at the facet centers
+</span><span class="c1"># Compute the z-value at the facet centers</span><span class="w">
 </span><span class="n">zfacet</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">z</span><span class="p">[</span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">z</span><span class="p">[</span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">var1_vals</span><span class="p">)]</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">z</span><span class="p">[</span><span class="m">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">var2_vals</span><span class="p">),</span><span class="w"> </span><span class="m">-1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">z</span><span class="p">[</span><span class="m">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">var1_vals</span><span class="p">),</span><span class="w"> </span><span class="m">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">var2_vals</span><span class="p">)]</span><span class="w">
 
-</span><span class="c1"># Recode facet z-values into color indices
+</span><span class="c1"># Recode facet z-values into color indices</span><span class="w">
 </span><span class="n">facetcol</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut</span><span class="p">(</span><span class="n">zfacet</span><span class="p">,</span><span class="w"> </span><span class="n">nbcol</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Use persp for 3D plotting
+</span><span class="c1"># Use persp for 3D plotting</span><span class="w">
 </span><span class="n">persp</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1_vals</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var2_vals</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-45</span><span class="p">,</span><span class="w">
       </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"\nOut of State Tuition"</span><span class="p">,</span><span class="w">
       </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"\nPercentage Alumni Donating"</span><span class="p">,</span><span class="w">
       </span><span class="n">zlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"\nPredicted Value"</span><span class="p">,</span><span class="w">
       </span><span class="n">cex.lab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
       </span><span class="n">ticktype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"detailed"</span><span class="p">,</span><span class="w">
-      </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span><span class="p">[</span><span class="n">facetcol</span><span class="p">])</span></code></pre></div>
+      </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span><span class="p">[</span><span class="n">facetcol</span><span class="p">])</span></code></pre></figure>
 
 <p><img src="/figs/2014-12-23-partial-dependence-1/unnamed-chunk-1-1.png" alt="center" /></p>
 

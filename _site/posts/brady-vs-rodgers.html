@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title>
-    Visualizing Implicit Racial Bias | Wicked Good Data
+    Brady/Rodgers Showdown | Wicked Good Data
   </title>
 
   <!-- CSS -->
@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -183,19 +98,23 @@
 
       <div class="container content">
         <div class="post">
-  <h2 class="post-title">Visualizing Implicit Racial Bias</h2>
-  <span class="post-date">March 14, 2015</span>
-  <p>For this project, I was looking to get more experience with D3.js and choropleths (I just find them to be fun visualization tools). Luckily, Project Implicit recently uploaded data from a few million participants they have been collecting over the past 10 years on a variety of different Implicit Association Tests (IATs), some of which have state and county information of those taking the test.</p>
+  <h2 class="post-title">Brady/Rodgers Showdown</h2>
+  <span class="post-date">November 28, 2014</span>
+  <p>With the way both teams are playing right now, this could be the first look at a possible Super Bowl matchup. As of the Friday before the game, various websites have the Packers as three-point favorites at home. In thinking about the outcome of the game, I realized I did not know the Packers’ offense that well. Of course Rodgers has been playing great, but who does he favor as targets? What part of the field does he like to throw to? It seems like I always see a bomb or two to Jordy Nelson on SportsCenter. To get a better idea, I tried to find some data to get a better look at who Brady and Rodgers are targeting and where. Luckily, I was able to find a play-by-play data set from the beginning of 2014 season to the present, which is freely available from <a href="http://nflsavant.com/about.php">NFLsavant.com</a>.</p>
 
-<p>For those of you who don’t know, the IAT <a href="https://implicit.harvard.edu/implicit/iatdetails.html">(as defined on the project implicit website)</a> is a measure of “the strength of associations between concepts (e.g., black people, gay people) and evaluations (e.g., good, bad) or stereotypes (e.g., athletic, clumsy).” In the case of the racial bias IAT, for example, participants are asked to sort words and pictures into stereotype congruent pairings (i.e., white and good; black and bad) or stereotype incongruent pairings (white and bad; black and good). The main idea is that sorting is much easier for the congruent pairing condition when compared to the incongruent pairing condition. Thus, taking the difference in reaction times for these two conditions for a given participant can create a measure of implicit bias. Note that this explanation is a simplification of the actual pre-processing algorithm used, known as the D-score.</p>
+<p>First, I decided to take a look at how pass targets are spread across the field between both the Green Bay and New England offense. See the figure below, and note that this includes all passing plays. As such, some attempts might be made by either Jimmy Garoppolo (New England’s backup), or Matt Flynn (Green Bay’s backup). Obviously more pass attempts are made closer to the line of scrimmage. Rodgers appears to slightly favor the right side of the field, while Brady seems to have substantial preference for short throws to the left side of the field. This is probably due to the high number of attempts to Edelman running either an out route on the left side of the field, or a crossing route from right to left.</p>
 
-<p>Anyway, <a href="https://implicit.harvard.edu/implicit/takeatest.html">Project Implicit</a> is a website where individuals can take many different IATs to measure various implicit thoughts and biases. I highly recommend checking it out to see what taking an IAT is like and contributing to the project. For this visualization, I will be using the racial bias IAT, which by far has the most participants in the available data sets (and are available for download on their Open Science Framework <a href="https://osf.io/52qxl/">project page</a>.</p>
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-3-1.png" alt="center" /></p>
 
-<p>After creating an R script to download the files off the web and clean them, I went ahead and created the visualization. Note that I required a sample size of at least 100 for each state for the state-level visualization, and at least 30 for each county for the county-level visualization. I also restricted the sample to those who reported living in a U.S. state (i.e., no armed forces or U.S. territories), reported their race as white, and also reported their state and county information. This left a sample size of 1,206,827. Not too shabby!</p>
+<p>I then examined how the number of targets varied by location and player. This step required a little bit of work given that only a description of each play was included in the data set and not the actual targeted player. The regular expression I used was certainly not perfect due to some inconsistencies in these descriptions. However, it seemed to capture the majority of the information correctly. Again, this included pass attempts by the offense as a whole, not just with the starting QBs. The first figure shows the data for Green Bay. By far, Jordy Nelson is the favorite target, catching quite a few short passes on both the right and left side of the field. The vast majority of deep passes going to Nelson are on the left side of the field. Randall Cobb is also a popular target, though he tends to be targeted on short passes to the left side of the field.</p>
 
-<p>You can see the visualization for state-level IAT scores from 2004 - 2013 <a href="/projects/IAT_Map/state_map.html">here</a>. You can also find the county-level plot as well, but it has a much more limiting sample size. Additionally, see below for a gif of how the choropleth changes across years. Not much of a conclusion can be made given the smaller sample size and the fact that samples are changing within each year, but it was fun putting together nonetheless. As always, the code and data for these visualizations can be found on <a href="https://github.com/dpmartin42/iat-map">GitHub</a>.</p>
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-5-1.png" alt="center" /></p>
 
-<p><img src="/projects/IAT_Map/figure/IAT_state.gif" alt="IAT gif" /></p>
+<p>While the Packers’ offense is dominated by Nelson and Cobb, the Patriots offense is much more evenly-distributed. In addition to Edelman and Lafell as popular WR options, Brady also looks to Gronkowski, the TE, and Vereen, the 3rd-down running back. Edelman is the overall favorite for short throws to the left and right side of the field, though not by much. Gronkowski is also a favorite target down the middle of the field, where he is looking to get open against zone defenses with a seam route.</p>
+
+<p><img src="/figs/2014-11-28-brady-vs-rodgers/unnamed-chunk-6-1.png" alt="center" /></p>
+
+<p>This analysis is nowhere near exhaustive, but it gave me a better idea of what to expect for the game on Sunday. With the level of detail found in this play-by-play data set, I am hoping to do something a little more interesting for playoff teams at the end of the season. As always, the code and data can be found on <a href="https://github.com/dpmartin42/dpmartin42.github.io">GitHub</a>.</p>
 
 </div>
 

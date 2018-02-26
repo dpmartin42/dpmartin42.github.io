@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title>
-    R, Shiny, and Naming Babies | Wicked Good Data
+    The Wizarding Network of Harry Potter | Wicked Good Data
   </title>
 
   <!-- CSS -->
@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -183,36 +98,21 @@
 
       <div class="container content">
         <div class="post">
-  <h2 class="post-title">R, Shiny, and Naming Babies</h2>
-  <span class="post-date">August 24, 2014</span>
-  <p>As an excuse to play around with the new version of shiny, I decided to try and make an interactive web application to visualize baby naming trends over time. A major consideration when creating an interactive application is creating useful error messages to inform the user when something is not going according to plan.</p>
+  <h2 class="post-title">The Wizarding Network of Harry Potter</h2>
+  <span class="post-date">November 05, 2014</span>
+  <p>I spent part of my summer as an intern at the <a href="http://centerforopenscience.org/">Center for Open Science</a>. I wanted to become more familiar with JavaScript (I never used it before the internship), so I carved out my own project to create a better network visualization of users on the <a href="https://osf.io/">Open Science Framework</a>. This way, researchers could see who is working with whom, and on what projects.</p>
 
-<p>In the case of visualizing baby naming trends, a major component of interactivity is the ability of the user to search specific names and genders. Because the babynames data is not entirely exhaustive (only names with greater than 5 instances in a given year are included), I had an empty graph pop up for my trend plot and an error message render for my table of frequency counts.</p>
+<p>While that code is still being integrated into the CoS infrastructure, I wanted to write a post applying/extending my code to other datasets. After some thought, I figured creating a network of Harry Potter character connections would be pretty neat. While I found <a href="https://github.com/efekarakus/potter-network/tree/master/data" target="_blank">this</a>, unfortunately I was looking for a dataset that contained more than 65 characters. Looks like a job for web scraping!</p>
 
-<p>Luckily, with the newer versions of shiny (later than 0.9.1.9008), custom messages to the user can be created with the validation function if a givent conditional is satisfied. In my example, I had a plotting function that returned the string “empty” if the name did not exist in the dataset and a plot if it did. Then, all I needed to do was add a validate function in the server.R file uses the need function with two arguments: the conditional, and the message to be displayed when the conditional is false (NOT true).</p>
+<p>First, I scraped a list of 178 characters taken from <a href="http://en.wikipedia.org/wiki/List_of_Harry_Potter_characters" target="_blank">wikipedia</a>. These characters also have their own pages on a <a href="http://harrypotter.wikia.com/wiki/Main_Page" target="_blank">Harry Potter wiki site</a>, and the majority of these names were identical to what needed to be added to the URL to access the page. A quick code check revealed only a few mistakes to be corrected, but luckily not much manual labor was required in this step.</p>
 
-<p>You can see the snippet of code that performs this action below:</p>
+<p>Next, I made the assumption that on a given character’s page, any name that was hyperlinked in the main text share some “logical connection” relevant in the Harry Potter universe. Of course, this assumption may not be completely tenable, but the results this came up with seemed reasonable. Thus, each character page was scraped for an image to use on a custom slider I created, as well as a list of connections to the other characters on my list.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">output</span><span class="o">$</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">renderPlot</span><span class="p">({</span><span class="w">
-  
-  </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">plotNames</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">name</span><span class="p">,</span><span class="w">
-                 </span><span class="n">input</span><span class="o">$</span><span class="n">sex</span><span class="p">,</span><span class="w">
-                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">),</span><span class="w">
-                 </span><span class="n">format</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">yearRange</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="s2">"%Y"</span><span class="p">))</span><span class="w">
-  
-  </span><span class="n">validate</span><span class="p">(</span><span class="w">
-    </span><span class="n">need</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s2">"empty"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"I'm sorry, no names that you entered appear in this dataset.
-         This means that all of them appear less than five times per
-         year for whatever sex you indicated."</span><span class="p">))</span><span class="w">
-      
-      </span><span class="n">p</span><span class="w">
-      
-    </span><span class="p">})</span></code></pre></div>
+<p>And that was it! All data scraping and cleaning took place in R, with the network layout being calculated using <a href="http://igraph.org/r/" target="_blank">igraph</a>. The actual network was visualized using the <a href="http://sigmajs.org/" target="_blank">sigma.js</a> JavaScript library, while the navigation tools and custom slider was created in plain ol’ HTML/JavaScript.</p>
 
-<p>When I get some more time, I’m hoping to customize the .css in the name entry add even more interactivity in the plot using rCharts. For now, you can see the app deployed to the shinyapps server <a href="http://dpmartin42.shinyapps.io/babynameR/">here</a>, and as always, the code is up on my <a href="https://github.com/dpmartin42/babynameR">GitHub</a>.</p>
+<p>Both Hadley Wickham’s new R web scraping tool <a href="https://github.com/hadley/rvest" target="_blank">rvest</a> and the awesome <a href="http://selectorgadget.com/" target="_blank">SelectorGadget</a> actually made this web scraping task much easier than I thought it would be. Note that rvest is not yet available on CRAN, but you can get the development version off his GitHub using devtools. One of my next posts will outline how to use rvest in more detail.</p>
 
-<p>For more information regarding the validation function, refer to <a href="http://shiny.rstudio.com/articles/validation.html">this</a> great tutorial created by the RStudio team.</p>
+<p>Check out the finished product <a href="../../projects/Harry_Potter/Harry_Potter_Network.html">here</a>, and check out my <a href="https://github.com/dpmartin42/Networks">GitHub</a> if you want to see the web scraping or JavaScript code. I also included two more networks with simple datasets in case anyone is interested in messing around with <a href="http://sigmajs.org/" target="_blank">sigma.js</a>.</p>
 
 
 </div>

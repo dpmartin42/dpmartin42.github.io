@@ -48,7 +48,6 @@
     </center>
     
     <p>Quantitative Psychology PhD and Data Scientist at McKinsey & Company.</p>
-    
     <p>
     
     <div style = "font-size: 30px">
@@ -63,7 +62,7 @@
     <a href="http://stackexchange.com/users/2457894/dmartin?tab=accounts"><i class="fa fa-stack-exchange"></i></a>
     
     <a href="http://linkedin.com/in/dpmartin42/"><i class="fa fa-linkedin"></i></a>
-    
+       
     </div>
     
   </div>
@@ -71,94 +70,10 @@
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item" href="/">Home</a>
-
-    
-
-    
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/about.html">About Me</a>
-        
-        
-        
-        
-        
-      
-    
-      
-    
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/posts.html">Posts</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/recommended_blogs.html">Recommended Blogs</a>
-        
-        
-        
-        
-        
-      
-    
-      
-        
-        
-        
-        
-        
-          <a class="sidebar-nav-item" href="/visualizations.html">Data Science Apps</a>
-        
-        
-        
-        
-        
-      
-    
-
+    <a class="sidebar-nav-item" href="/about">About Me</a>
+    <a class="sidebar-nav-item" href="/posts">Posts</a>
+    <a class="sidebar-nav-item" href="/recommended_blogs">Recommended Blogs</a>
+    <a class="sidebar-nav-item" href="/visualizations">Data Science Apps</a>
   </nav>
 
   <div class="sidebar-item">
@@ -223,14 +138,14 @@
 
 <h2 id="simulation-set-up">Simulation set-up</h2>
 
-<p>To simulate class imbalance, the <code>twoClassSim</code> function from caret is used. Here, we simulate a separate training set and test set, each with 5000 observations. Additionally, we include 20 meaningful variables and 10 noise variables. The intercept argument controls the overall level of class imbalance and has been selected to yield a class imbalance of around 50:1.</p>
+<p>To simulate class imbalance, the <code class="highlighter-rouge">twoClassSim</code> function from caret is used. Here, we simulate a separate training set and test set, each with 5000 observations. Additionally, we include 20 meaningful variables and 10 noise variables. The intercept argument controls the overall level of class imbalance and has been selected to yield a class imbalance of around 50:1.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data manipulation
-</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w"> </span><span class="c1"># for model-building
-</span><span class="n">library</span><span class="p">(</span><span class="n">DMwR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for smote implementation
-</span><span class="n">library</span><span class="p">(</span><span class="n">purrr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for functional programming (map)
-</span><span class="n">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for AUC calculations
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for data manipulation</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span><span class="w"> </span><span class="c1"># for model-building</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">DMwR</span><span class="p">)</span><span class="w"> </span><span class="c1"># for smote implementation</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">purrr</span><span class="p">)</span><span class="w"> </span><span class="c1"># for functional programming (map)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span><span class="w"> </span><span class="c1"># for AUC calculations</span><span class="w">
+
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">2969</span><span class="p">)</span><span class="w">
 
 </span><span class="n">imbal_train</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">twoClassSim</span><span class="p">(</span><span class="m">5000</span><span class="p">,</span><span class="w">
@@ -243,26 +158,26 @@
                            </span><span class="n">linearVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w">
                            </span><span class="n">noiseVars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w">
   
-</span><span class="n">prop.table</span><span class="p">(</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">))</span></code></pre></div>
+</span><span class="n">prop.table</span><span class="p">(</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">))</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## 
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## 
 ## Class1 Class2 
-## 0.9796 0.0204</code></pre></div>
+## 0.9796 0.0204</code></pre></figure>
 
 <h2 id="initial-results">Initial results</h2>
 
-<p>To model these data, a gradient boosting machine (gbm) is used as it can easily handle potential interactions and non-linearities that have been simulated above. Model hyperparameters are tuned using repeated cross-validation on the training set, repeating five times with ten folds used in each repeat. The AUC is used to evaluate the classifier to avoid having to make decisions about the classification threshold. Note that this code takes a little while to run due to the repeated cross-validation, so reduce the number of repeats to speed things up and/or use the <code>verboseIter = TRUE</code> argument in the <code>trainControl</code> function to keep track of the progress.</p>
+<p>To model these data, a gradient boosting machine (gbm) is used as it can easily handle potential interactions and non-linearities that have been simulated above. Model hyperparameters are tuned using repeated cross-validation on the training set, repeating five times with ten folds used in each repeat. The AUC is used to evaluate the classifier to avoid having to make decisions about the classification threshold. Note that this code takes a little while to run due to the repeated cross-validation, so reduce the number of repeats to speed things up and/or use the <code class="highlighter-rouge">verboseIter = TRUE</code> argument in the <code class="highlighter-rouge">trainControl</code> function to keep track of the progress.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Set up control function for training
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Set up control function for training</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">trainControl</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"repeatedcv"</span><span class="p">,</span><span class="w">
                      </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
                      </span><span class="n">repeats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w">
                      </span><span class="n">summaryFunction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">twoClassSummary</span><span class="p">,</span><span class="w">
                      </span><span class="n">classProbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build a standard classifier using a gradient boosted machine
-</span><span class="w">
+</span><span class="c1"># Build a standard classifier using a gradient boosted machine</span><span class="w">
+
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">5627</span><span class="p">)</span><span class="w">
 
 </span><span class="n">orig_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -272,9 +187,9 @@
                   </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build custom AUC function to extract AUC
-# from the caret model object
-</span><span class="w">
+</span><span class="c1"># Build custom AUC function to extract AUC</span><span class="w">
+</span><span class="c1"># from the caret model object</span><span class="w">
+
 </span><span class="n">test_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   
   </span><span class="n">roc</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">Class</span><span class="p">,</span><span class="w">
@@ -284,30 +199,30 @@
 
 </span><span class="n">orig_fit</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">test_roc</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">auc</span><span class="p">()</span></code></pre></div>
+  </span><span class="n">auc</span><span class="p">()</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## Area under the curve: 0.9575</code></pre></div>
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## Area under the curve: 0.9575</code></pre></figure>
 
 <p>Overall, the final model yields an AUC of 0.96 which is quite good. Can we improve it using the techniques outlined above?</p>
 
 <h2 id="handling-class-imbalance-with-weighted-or-sampling-methods">Handling class imbalance with weighted or sampling methods</h2>
 
-<p>Both weighting and sampling methods are easy to employ in caret. Incorporating weights into the model can be handled by using the weights argument in the <code>train</code> function (assuming the model can handle weights in caret, see the list <a href="https://topepo.github.io/caret/train-models-by-tag.html#Accepts_Case_Weights">here</a>), while the sampling methods mentioned above can be implemented using the sampling argument in the <code>trainControl</code> function. Note that the same seeds were used for each model to ensure that results from the same cross-validation folds are being used.</p>
+<p>Both weighting and sampling methods are easy to employ in caret. Incorporating weights into the model can be handled by using the weights argument in the <code class="highlighter-rouge">train</code> function (assuming the model can handle weights in caret, see the list <a href="https://topepo.github.io/caret/train-models-by-tag.html#Accepts_Case_Weights">here</a>), while the sampling methods mentioned above can be implemented using the sampling argument in the <code class="highlighter-rouge">trainControl</code> function. Note that the same seeds were used for each model to ensure that results from the same cross-validation folds are being used.</p>
 
-<p>Also keep in mind that for sampling methods, it is vital that you only sample the training set and not the test set as well. This means that when doing cross-validation, the sampling step must be done inside of the cross-validation procedure. Max Kuhn of the caret package gives a good overview of what happens when you don’t take this precaution in <a href="https://topepo.github.io/caret/subsampling-for-class-imbalances.html">this caret documentation</a>. Using the sampling argument in the <code>trainControl</code> function implements sampling correctly in the cross-validation procedure.</p>
+<p>Also keep in mind that for sampling methods, it is vital that you only sample the training set and not the test set as well. This means that when doing cross-validation, the sampling step must be done inside of the cross-validation procedure. Max Kuhn of the caret package gives a good overview of what happens when you don’t take this precaution in <a href="https://topepo.github.io/caret/subsampling-for-class-imbalances.html">this caret documentation</a>. Using the sampling argument in the <code class="highlighter-rouge">trainControl</code> function implements sampling correctly in the cross-validation procedure.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Create model weights (they sum to one)
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Create model weights (they sum to one)</span><span class="w">
+
 </span><span class="n">model_weights</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Class1"</span><span class="p">,</span><span class="w">
                         </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w">
                         </span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="n">table</span><span class="p">(</span><span class="n">imbal_train</span><span class="o">$</span><span class="n">Class</span><span class="p">)[</span><span class="m">2</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Use the same seed to ensure same cross-validation splits
-</span><span class="w">
+</span><span class="c1"># Use the same seed to ensure same cross-validation splits</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="o">$</span><span class="n">seeds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">orig_fit</span><span class="o">$</span><span class="n">control</span><span class="o">$</span><span class="n">seeds</span><span class="w">
 
-</span><span class="c1"># Build weighted model
-</span><span class="w">
+</span><span class="c1"># Build weighted model</span><span class="w">
+
 </span><span class="n">weighted_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
                       </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_train</span><span class="p">,</span><span class="w">
                       </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
@@ -316,8 +231,8 @@
                       </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
                       </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build down-sampled model
-</span><span class="w">
+</span><span class="c1"># Build down-sampled model</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"down"</span><span class="w">
 
 </span><span class="n">down_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -327,8 +242,8 @@
                   </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build up-sampled model
-</span><span class="w">
+</span><span class="c1"># Build up-sampled model</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"up"</span><span class="w">
 
 </span><span class="n">up_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -338,8 +253,8 @@
                 </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
                 </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Build smote model
-</span><span class="w">
+</span><span class="c1"># Build smote model</span><span class="w">
+
 </span><span class="n">ctrl</span><span class="o">$</span><span class="n">sampling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"smote"</span><span class="w">
 
 </span><span class="n">smote_fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">train</span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w">
@@ -347,12 +262,12 @@
                    </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gbm"</span><span class="p">,</span><span class="w">
                    </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
                    </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ROC"</span><span class="p">,</span><span class="w">
-                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span></code></pre></div>
+                   </span><span class="n">trControl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctrl</span><span class="p">)</span></code></pre></figure>
 
 <p>Examining the AUC calculated on the test set shows a clear distinction between the original model implementation and those that incorporated either a weighting or sampling technique. The weighted method possessed the highest AUC value, followed by the sampling methods, with the original model implementation performing the worst.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Examine results for test set
-</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># Examine results for test set</span><span class="w">
+
 </span><span class="n">model_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig_fit</span><span class="p">,</span><span class="w">
                    </span><span class="n">weighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weighted_fit</span><span class="p">,</span><span class="w">
                    </span><span class="n">down</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">down_fit</span><span class="p">,</span><span class="w">
@@ -363,9 +278,9 @@
   </span><span class="n">map</span><span class="p">(</span><span class="n">test_roc</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imbal_test</span><span class="p">)</span><span class="w">
 
 </span><span class="n">model_list_roc</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">map</span><span class="p">(</span><span class="n">auc</span><span class="p">)</span></code></pre></div>
+  </span><span class="n">map</span><span class="p">(</span><span class="n">auc</span><span class="p">)</span></code></pre></figure>
 
-<div class="highlight"><pre><code class="language-text" data-lang="text">## $original
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## $original
 ## Area under the curve: 0.9575
 ## 
 ## $weighted
@@ -378,11 +293,11 @@
 ## Area under the curve: 0.9759
 ## 
 ## $SMOTE
-## Area under the curve: 0.976</code></pre></div>
+## Area under the curve: 0.976</code></pre></figure>
 
 <p>We can examine the actual ROC curve to get a better idea of where the weighted and sampling models are outperforming the original model at a variety of classification thresholds. Here, we see that the weighted model seems to dominate the others throughout, while the original model lags between a false positive rate between 0% and 25%. This indicates that the other models have better early retrieval numbers. That is, the algorithm better identifies the true positives as a function of false positives for instances that are predicted as having a high probability of being in the minority class.</p>
 
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">results_list_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">results_list_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
 </span><span class="n">num_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
 
 </span><span class="k">for</span><span class="p">(</span><span class="n">the_roc</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">model_list_roc</span><span class="p">){</span><span class="w">
@@ -398,15 +313,15 @@
 
 </span><span class="n">results_df_roc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">bind_rows</span><span class="p">(</span><span class="n">results_list_roc</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># Plot ROC curve for all 5 models
-</span><span class="w">
+</span><span class="c1"># Plot ROC curve for all 5 models</span><span class="w">
+
 </span><span class="n">custom_col</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"#000000"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#009E73"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#0072B2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#D55E00"</span><span class="p">,</span><span class="w"> </span><span class="s2">"#CC79A7"</span><span class="p">)</span><span class="w">
 
 </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fpr</span><span class="p">,</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tpr</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">results_df_roc</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">custom_col</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gray"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="n">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">)</span></code></pre></div>
+  </span><span class="n">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/figs/2016-12-10-imbalanced-classes-part-1/unnamed-chunk-5-1.png" alt="center" /></p>
 
