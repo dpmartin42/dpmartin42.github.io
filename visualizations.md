@@ -8,7 +8,7 @@ title: Data Science Apps
 <p>
 
 <center>foodfindr</center>
-<center><a href="https://dpmartin42.shinyapps.io/foodfindr/"><img style="max-height: 200px; height: auto" src="../images/foodfindr.png" align="middle"></a></center>
+<center><a href="https://dpmartin42.shinyapps.io/foodfindr/"><img style="max-height: 200px; height: auto" src="../extras/foodfindr.png" align="middle"></a></center>
 Interactive map of predicted health of Boston restaurants. Built using Python, R, Shiny, and AWS.
 
 <p>
@@ -23,7 +23,7 @@ Interactive map of predicted health of Boston restaurants. Built using Python, R
 <p style="border: 2px solid #6a9fb5"></p>
 
 <center>School SelectR</center>
-<center><a href="https://dpmartin42.shinyapps.io/college-choice-app/"><img style="max-height: 200px; height: auto" src="../images/School_SelectR.png" align="middle"></a></center>
+<center><a href="https://dpmartin42.shinyapps.io/college-choice-app/"><img style="max-height: 200px; height: auto" src="../extras/School_SelectR.png" align="middle"></a></center>
 Creates a list of colleges that best matches user criteria. Built using R and Shiny.
 
 <p>
@@ -38,7 +38,7 @@ Creates a list of colleges that best matches user criteria. Built using R and Sh
 <p style="border: 2px solid #6a9fb5"></p>
 
 <center>IAT State Map</center>
-<center><a href="../projects/IAT_Map/state_map.html"><img style="max-height: 200px; height: auto" src="../images/IATMap.png" align="middle"></a></center>
+<center><a href="../projects/IAT_Map/state_map.html"><img style="max-height: 200px; height: auto" src="../extras/IATMap.png" align="middle"></a></center>
 Visualizes Implicit Association Test data over 10 years. Built using R and D3.js.
 
 <p>
@@ -53,7 +53,7 @@ Visualizes Implicit Association Test data over 10 years. Built using R and D3.js
 <p style="border: 2px solid #6a9fb5"></p>
 
 <center>Wizarding Network of Harry Potter</center>
-<center><a href="../projects/Harry_Potter/Harry_Potter_Network.html"><img style="max-height: 200px; height: auto" src="../images/HP_network.png"></a></center>
+<center><a href="../projects/Harry_Potter/Harry_Potter_Network.html"><img style="max-height: 200px; height: auto" src="../extras/HP_network.png" align="middle"></a></center>
 Visualizes character connections in the Harry Potter Universe. Built using R and sigma.js.
 
 <p>
@@ -68,7 +68,7 @@ Visualizes character connections in the Harry Potter Universe. Built using R and
 <p style="border: 2px solid #6a9fb5"></p>
 
 <center>babynameR</center>
-<center><a href="https://dpmartin42.shinyapps.io/babynameR/"><img style="max-height: 200px; height: auto" src="../images/babynameR.png"></a></center>
+<center><a href="https://dpmartin42.shinyapps.io/babynameR/"><img style="max-height: 200px; height: auto" src="../extras/babynameR.png" align="middle"></a></center>
 Visualizes the popularity of baby names over time. Built using R and Shiny.
 
 <p>

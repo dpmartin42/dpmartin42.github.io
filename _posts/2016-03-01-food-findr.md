@@ -17,15 +17,11 @@ After some research, I ultimately decided on using the following workflow:
 
 Given that the notion of health was itself dependent upon the assumptions I made with assigning labels, validation of results was key. First, I calculated AUC as a measure of internal validation using 5-fold cross-validation. The image of the ROC curve can be seen below:
 
-<p align="center">
-![](figs/2016-03-01-food-findr/ROC.png "Logo Title Text 1")
-</p>
+<p><img src="/figs/2016-03-01-food-findr/ROC.png" alt="center"/></p>
 
 In addition to internal validation, I also performed external validation in three ways. The first was to look at variable importance and partial dependence plots of the top predictors to ensure they made intuitive sense. They did, with words like turkey, cucumber, and hummus having high predictive power in a positive direction, and words like fried, sauce, and provolone having high predictive power in a negative direction. A variable importance plot of the most important food words can be seen below:
 
-<p align="center">
-![](figs/2016-03-01-food-findr/VarImp.png "Logo Title Text 1")
-</p>
+<p><img src="/figs/2016-03-01-food-findr/VarImp.png" alt="center"/></p>
 
 The second was to identify if clusters of unhealthy restaurants existed in areas one would expect. Sure enough, both Chinatown and the North End were covered in red restaurants. Finally, the third was to manually curate a list of recommended healthy restaurants using local Boston food blogs. From three blogs I found 30 recommended restaurants, of which my app classified 19 as "green" and 11 as "yellow" with no "red". The final project, which I called foodfindr, can be seen on [my shinyapps dashboard](https://dpmartin42.shinyapps.io/foodfindr/). 
 
