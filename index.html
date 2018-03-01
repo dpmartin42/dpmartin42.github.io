@@ -4,42 +4,29 @@ title: Home
 ---
 
 <section class="content">
- 
-  {% assign post = site.posts.first %}
-  {% assign content = post.content %}
 
-  <h2>
-    <a href="{{ post.url }}">{{ post.title }}</a>
-  </h2>
+This is the homepage and blog of Daniel P. Martin, lead data scientist for the client-facing
+people analytics team at McKinsey & Company. For more about me, see
+<a href = "/about">here</a>.
 
-  <section class="post-date">
-    {{ post.date | date: '%B %d, %Y' }}
-  </section>
-  
-  <p>
-  
-	{{ post.content | split:'<!--more-->' | first }}
-  
-  <hr>
+<h2>Recent Posts</h2>
 
-  <!-- Bio here -->
-  <section class="meta">
-    <h3>About</h3>
-    <section class="copy">
+<ul class="listing">
 
-      <p>
-        I am a lead data scientist for Organizational Solutions at McKinsey & Company, interested in
-        statistics, machine learning, education, and open science, among other things. 
-        All opinions and views expressed on this blog are my own and do not represent my employer. 
-      </p>
-      
-      
-      
-      <a href="{{ post.url }}#disqus_thread">Comments</a>
-
-    </section>
-    
-    <p>
-
+{% for post in site.posts limit:4 %}
+  {% assign currentdate = post.date | date: "%Y" %}
+  {% if currentdate != date %}
+    {% unless forloop.first %}</ul>{% endunless %}
+    {% unless post.draft %}
+    <h3 id="y{{post.date | date: "%Y"}}">{{ currentdate }}</h3>
+    <ul>
+    {% assign date = currentdate %}
+    {% endunless %}
+  {% endif %}
+    {% unless post.draft %}
+    <li><span>{{ post.date | date: "%B %e, %Y" }}</span> | <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endunless %}
+  {% if forloop.last %}</ul>{% endif %}
+{% endfor %}
 
 </section>

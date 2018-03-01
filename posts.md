@@ -10,7 +10,7 @@ title: Posts
   {% if currentdate != date %}
     {% unless forloop.first %}</ul>{% endunless %}
     {% unless post.draft %}
-    <h1 id="y{{post.date | date: "%Y"}}">{{ currentdate }}</h1>
+    <h2 id="y{{post.date | date: "%Y"}}">{{ currentdate }}</h2>
     <ul>
     {% assign date = currentdate %}
     {% endunless %}
