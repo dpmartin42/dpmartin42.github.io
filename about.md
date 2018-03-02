@@ -3,7 +3,7 @@ layout: page
 title: About Me
 ---
 
-I am currently the lead data scientist for the client-facing people analytics team at
+I am currently a lead data scientist for the client-facing people analytics team at
 McKinsey & Company, where I help clients use data to improve decision-making around talent
 related questions. Before this, I received my Ph.D in 2015 from the Quantitative Psychology 
 program at the [University of Virginia](http://www.virginia.edu/), where I worked with
