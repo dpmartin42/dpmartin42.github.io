@@ -24,11 +24,6 @@ to visualize the raw data from these tests.
 
 ## Papers
 
-Silberzahn R., Uhlmann E. L., Martin D. P., ..., & Nosek, B. A. (in press). [Many analysts, 
-one dataset: Making transparent how variations in analytical choices 
-affect results.](https://osf.io/j5v8f/) *Advances in Methods and Practices in Psychological 
-Science*.
-
 Ebersole, C. R. et al. (2016). [Many Labs 3: Evaluating participant pool quality
 across the academic semester via replication.](https://osf.io/csygd/) *Journal of Experimental Social
 Psychology, 67, 68 - 82.*
@@ -45,7 +40,12 @@ fifth grade math?](../extras/JSP_final.pdf) *Journal of School Psychology, 53, 3
 partitioning.](../extras/dissertation.pdf)
 
 Open Science Collaboration. (2015). [Estimating the reproducibility of psychological
-science.](https://osf.io/phtye/) *Science, 349, 943*
+science.](https://osf.io/phtye/) *Science, 349, 943.*
+
+Silberzahn R., Uhlmann E. L., Martin D. P., ..., & Nosek, B. A. (2018). [Many analysts, 
+one dataset: Making transparent how variations in analytical choices 
+affect results.](https://osf.io/j5v8f/) *Advances in Methods and Practices in Psychological 
+Science, 1, 337 - 356.*
 
 
 <small>
