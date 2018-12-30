@@ -25,18 +25,24 @@
 /* HP font */
 @font-face {
         font-family: HarryPotter;
-        src: url('HP.ttf');
+        src: 
+            url('HP.TTF'),
+            url('./projects/Harry_Potter/css/HP.TTF');
 }
 
 h1 { 
 font-family: "HarryPotter";
 text-align: center;
-font-size: 200%
+font-size: 150%
 }
 h2 { 
 font-family: "HarryPotter";
 text-align: center;
-font-size: 150%
+font-size: 100%
+}
+
+p {
+font-size: 80%
 }
 
 .instructions{
@@ -70,55 +76,55 @@ font-size: 150%
 .move-up {
   position: absolute;
   bottom: 60px;
-  left: 80px;
+  left: 45px;
   margin: 5px;
 }
 .move-down {
   position: absolute;
   bottom: 20px;
-  left: 80px;
+  left: 45px;
   margin: 5px;
 }
 .move-left {
   position: absolute;
   bottom: 40px;
-  left: 50px;
+  left: 15px;
   margin: 5px;
 }
 .move-right {
   position: absolute;
   bottom: 40px;
-  left: 110px;
+  left: 75px;
   margin: 5px;
 }
 .zoom-in {
   position: absolute;
   bottom: 60px;
-  left: 200px;
+  left: 165px;
   margin: 5px;
 }
 .zoom-out {
   position: absolute;
   bottom: 20px;
-  left: 200px;
+  left: 165px;
   margin: 5px;
 }
 .refresh {
   position: absolute;
   bottom: 40px;
-  left: 200px;
+  left: 165px;
   margin: 5px;
 }
 .ui-widget {
   position: absolute;
   top: 10px;
-  left: 35px;
+  left: 0px;
   margin: 5px;
 }
 .nameSearch {
   position: absolute;
-  top: 55px;
-  left: 35px;
+  top: 60px;
+  left: 0px;
   margin: 5px;
 }
 /* Autocomplete style */
