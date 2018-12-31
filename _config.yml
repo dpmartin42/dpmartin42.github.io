@@ -13,6 +13,13 @@ author:
   name:              Dan Martin
   email:             dpmartin42@gmail.com
 
+# Plugins 
+plugins:
+  - jekyll-redirect-from
+  
+whitelist:
+  - jekyll-redirect-from
+
 # Set up google analytics
 
 analytics :
