@@ -2,6 +2,9 @@
 layout: post
 title: Calculating College Basketball rankings using functional programming in R
 category: r
+redirect_from:
+  - /r/college-basketball-rankings
+  - /blogposts/r/college-basketball-rankings
 ---
 
 March Madness is officially upon us as College Basketball teams across the US try to get a few more signature wins on their resume during conference tournaments before [Selection Sunday](https://www.ncaa.com/news/basketball-men/march-madness-selection-sunday-dates-schedule). With only 30 or so games in a given season and around 350 teams in Division I, being able to measure the relative strength of teams who have not played one another becomes an important challenge. 

@@ -2,6 +2,9 @@
 layout: post
 title: Handling Class Imbalance with R and Caret - Caveats when using the AUC
 category: r
+redirect_from:
+  - /r/imbalanced-classes-part-2
+  - /blogposts/r/imbalanced-classes-part-2
 ---
 
 In my [last post](http://dpmartin42.github.io/blogposts/r/imbalanced-classes-part-1), I went over how weighting and sampling methods can help to improve predictive performance in the case of imbalanced classes. I also included an applied example with a simulated dataset that used the area under the ROC curve (AUC) as the evaluation metric. In this post, I will go over some issues to keep in mind when using the AUC in the case of imbalanced classes and highlight another metric that is useful to examine: area under the precision-recall curve (AUPRC).

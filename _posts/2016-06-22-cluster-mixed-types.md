@@ -4,6 +4,7 @@ title: Clustering Mixed Data Types in R
 category: r
 redirect_from:
   - /r/cluster-mixed-types
+  - /blogposts/r/cluster-mixed-types
 ---
 
 

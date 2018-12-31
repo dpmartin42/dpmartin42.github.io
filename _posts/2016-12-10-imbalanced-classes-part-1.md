@@ -2,6 +2,9 @@
 layout: post
 title: Handling Class Imbalance with R and Caret - An Introduction
 category: r
+redirect_from:
+  - /r/imbalanced-classes-part-1
+  - /blogposts/r/imbalanced-classes-part-1
 ---
 
 
