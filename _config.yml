@@ -3,7 +3,7 @@ permalink:           posts/:categories/:title
 
 # Setup
 title:               Wicked Good Data
-description:         'Quantitative Psychology PhD and Data Scientist at McKinsey & Company.'
+description:         'Quantitative Psychology PhD and Data Scientist at Boston Medical Center.'
 url:                 http://dpmartin42.github.io
 baseurl:             ''
 highlighter:         rouge
